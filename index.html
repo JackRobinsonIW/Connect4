@@ -12,91 +12,94 @@
 </head>
 
 <body>
+
     <!-- Top info bar -->
-    <div>
-        <div>
-            <p>Yellow:</p>
-            <p>Red:</p>
+    <div id="top-bar" class="row">
+        <div id="score-section" class="col-4">
+            <p class="score-text">Yellow:</p>
+            <p class="score-text">Red:</p>
         </div>
 
-        <div>
+        <div id="title-section" class="col-4">
             <h3>Connect 4</h3>
         </div>
 
-        <div>
-            <button>Reset Game</button>
+        <div id="reset-section" class="col-4">
+            <button class="btn btn-primary">Reset Game</button>
         </div>
     </div>
 
-    <div>
-        <p>Placeholder text for notification banner</p>
+    <div id="notification-banner">
+        <p class="text-center">Placeholder text for notification banner</p>
     </div>
 
-    <div>
-        <!-- Row 1 -->
-        <div>
-            <div>1</div>
-            <div>2</div>
-            <div>3</div>
-            <div>4</div>
-            <div>5</div>
-            <div>6</div>
-            <div>7</div>
-        </div>
+    <div class="container">
+        <div id="game-board" class="col-md-4 col-sm-12">
+            <!-- Row 1 -->
+            <div id="row-1" class="row">
+                <div class="board-item">1</div>
+                <div class="board-item">2</div>
+                <div class="board-item">3</div>
+                <div class="board-item">4</div>
+                <div class="board-item">5</div>
+                <div class="board-item">6</div>
+                <div class="board-item">7</div>
+            </div>
 
-        <!-- Row 2 -->
-        <div>
-            <div>1</div>
-            <div>2</div>
-            <div>3</div>
-            <div>4</div>
-            <div>5</div>
-            <div>6</div>
-            <div>7</div>
-        </div>
+            <!-- Row 2 -->
+            <div id="row-2" class="row">
+                <div class="board-item">1</div>
+                <div class="board-item">2</div>
+                <div class="board-item">3</div>
+                <div class="board-item">4</div>
+                <div class="board-item">5</div>
+                <div class="board-item">6</div>
+                <div class="board-item">7</div>
+            </div>
 
-        <!-- Row 3 -->
-        <div>
-            <div>1</div>
-            <div>2</div>
-            <div>3</div>
-            <div>4</div>
-            <div>5</div>
-            <div>6</div>
-            <div>7</div>
-        </div>
+            <!-- Row 3 -->
+            <div id="row-3" class="row">
+                <div class="board-item">1</div>
+                <div class="board-item">2</div>
+                <div class="board-item">3</div>
+                <div class="board-item">4</div>
+                <div class="board-item">5</div>
+                <div class="board-item">6</div>
+                <div class="board-item">7</div>
+            </div>
 
-        <!-- Row 4 -->
-        <div>
-            <div>1</div>
-            <div>2</div>
-            <div>3</div>
-            <div>4</div>
-            <div>5</div>
-            <div>6</div>
-            <div>7</div>
-        </div>
+            <!-- Row 4 -->
+            <div id="row-4" class="row">
+                <div class="board-item">1</div>
+                <div class="board-item">2</div>
+                <div class="board-item">3</div>
+                <div class="board-item">4</div>
+                <div class="board-item">5</div>
+                <div class="board-item">6</div>
+                <div class="board-item">7</div>
+            </div>
 
-        <!-- Row 5 -->
-        <div>
-            <div>1</div>
-            <div>2</div>
-            <div>3</div>
-            <div>4</div>
-            <div>5</div>
-            <div>6</div>
-            <div>7</div>
-        </div>
+            <!-- Row 5 -->
+            <div id="row-5" class="row">
+                <div class="board-item">1</div>
+                <div class="board-item">2</div>
+                <div class="board-item">3</div>
+                <div class="board-item">4</div>
+                <div class="board-item">5</div>
+                <div class="board-item">6</div>
+                <div class="board-item">7</div>
+            </div>
 
-        <!-- Row 6 -->
-        <div>
-            <div>1</div>
-            <div>2</div>
-            <div>3</div>
-            <div>4</div>
-            <div>5</div>
-            <div>6</div>
-            <div>7</div>
+            <!-- Row 6 -->
+            <div id="row-6" class="row">
+                <div class="board-item">1</div>
+                <div class="board-item">2</div>
+                <div class="board-item">3</div>
+                <div class="board-item">4</div>
+                <div class="board-item">5</div>
+                <div class="board-item">6</div>
+                <div class="board-item">7</div>
+            </div>
         </div>
     </div>
 
@@ -106,6 +109,7 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
 </body>
 
 </html>

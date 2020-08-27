@@ -1,5 +1,7 @@
-#top-bar {
-    background-color: grey;
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .score-text {
@@ -8,11 +10,49 @@
 }
 
 .board-item {
-    /* padding: 10px; */
+    text-align: center;
+    font-size: 10px;
+    width: 8em;
+    height: 8em;
     border: 1px solid black;
 }
 
 .board-row {
-    display: flex;
-    flex-flow: row nowrap;
+    /* padding: 1em; */
+    justify-content: center;
+}
+
+#top-bar {
+    background-color: grey;
+}
+
+#bottom-bar {
+    margin-top: auto;
+    margin-bottom: 0;
+    /* position: sticky; */
+    /* bottom: 0; */
+    /* align-items: flex-end; */
+    background-color: grey;
+}
+
+#score-section {}
+
+#title-section {}
+
+#reset-section {}
+
+@media only screen and (max-width: 768px) {
+    /* For phones: */
+    .board-item {
+        width: 6em;
+        height: 6em;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    /* For phones: */
+    .board-item {
+        width: 4em;
+        height: 4em;
+    }
 }

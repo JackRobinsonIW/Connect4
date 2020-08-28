@@ -14,7 +14,16 @@ body {
     font-size: 10px;
     width: 8em;
     height: 8em;
-    border: 1px solid black;
+    background-color: white;
+    border: 2px solid blue;
+    border-radius: 50%;
+}
+
+#game-board {
+    align-items: center;
+    background-color: blue;
+    border-radius: 1em;
+    padding: 10px;
 }
 
 .board-row {
@@ -33,6 +42,11 @@ body {
     /* bottom: 0; */
     /* align-items: flex-end; */
     background-color: grey;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
 }
 
 #score-section {}

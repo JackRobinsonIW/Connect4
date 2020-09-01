@@ -1,72 +1,68 @@
-body {
+#top-bar {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    font-family: Verdana, Geneva, sans-serif;
+}
+
+#title {
+    font-size: 50px;
+    margin: 0px;
+}
+
+#partition {
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
-.score-text {
-    padding: 0;
-    margin: 0;
+#scoreboard {
+    display: flex;
+    justify-content: center;
 }
 
-.board-item {
+#gameboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background-color: blue;
+    border-radius: 4%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+#scoreboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center
+}
+
+#settings-tab {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#winner-display {
+    display: none;
     text-align: center;
-    font-size: 10px;
-    width: 8em;
-    height: 8em;
+}
+
+.board-square {
     background-color: white;
-    border: 2px solid blue;
+    border: 5px solid rgb(0, 0, 200);
     border-radius: 50%;
 }
 
-#game-board {
-    align-items: center;
-    background-color: blue;
-    border-radius: 1em;
-    padding: 10px;
-}
-
 .board-row {
-    /* padding: 1em; */
-    justify-content: center;
+    width: 100%;
+    justify-content: space-evenly;
 }
 
-#top-bar {
-    background-color: grey;
-}
-
-#bottom-bar {
-    margin-top: auto;
-    margin-bottom: 0;
-    /* position: sticky; */
-    /* bottom: 0; */
-    /* align-items: flex-end; */
-    background-color: grey;
-}
-
-.container {
-    display: flex;
-    justify-content: center;
-}
-
-#score-section {}
-
-#title-section {}
-
-#reset-section {}
-
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 576px) {
     /* For phones: */
-    .board-item {
-        width: 6em;
-        height: 6em;
-    }
-}
-
-@media only screen and (max-width: 600px) {
-    /* For phones: */
-    .board-item {
-        width: 4em;
-        height: 4em;
+    #gameboard {
+        order: -1;
     }
 }

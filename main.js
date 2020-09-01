@@ -226,7 +226,8 @@ document.addEventListener('DOMContentLoaded', function() {
 }, false);
 
 window.addEventListener('resize', function(event) {
-    sizeSquares(board)
+    sizeSquares(board) <<
+        << << < HEAD
 });
 
 module.exports = {

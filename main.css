@@ -53,12 +53,21 @@
     background-color: white;
     border: 5px solid rgb(0, 0, 200);
     border-radius: 50%;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
 }
 
 .board-row {
     width: 100%;
     justify-content: space-evenly;
 }
+
+@keyframes highlightWinner {
+    from {border: 5px solid rgb(0, 0, 200);}
+    to {border: 10px solid whitesmoke;}
+  }
 
 @media only screen and (max-width: 576px) {
     /* For phones: */

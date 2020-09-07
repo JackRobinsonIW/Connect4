@@ -8,7 +8,7 @@ function columnEmptySpace(column, boardState) {
   return index;
 }
 
-function checkAdjacent(direction, x, y, array, boardState) {
+function checkAdjacent(direction, x, y, winningPoints, boardState) {
   // Define x and y changes for a given direction with 0 = UP, 1 = UP-RIGHT, 2 = RIGHT, etc
   const iValues = [-1, -1, 0, 1, 1, 1, 0, -1];
   const jValues = [0, 1, 1, 1, 0, -1, -1, -1];
@@ -19,16 +19,16 @@ function checkAdjacent(direction, x, y, array, boardState) {
 
   // Check out of bounds
   if (newX >= boardState.length || newX < 0 || newY >= boardState[x].length || newY < 0) {
-    return array;
+    return winningPoints;
   }
 
   // Check if adjacent square is same value and if so call recursively
   if (boardState[x][y] === boardState[newX][newY] && boardState[newX][newY] !== null) {
-    array.push([newX, newY]);
-    return checkAdjacent(direction, newX, newY, array);
+    winningPoints.push([newX, newY]);
+    return checkAdjacent(direction, newX, newY, winningPoints, boardState);
   }
 
-  return array;
+  return winningPoints;
 }
 
 function checkWinner(x, y, lengthNeeded, boardState) {
@@ -74,13 +74,13 @@ function createEmptyBoardState(rows, columns) {
   return boardState;
 }
 
-if (typeof module !== 'undefined') {
-  module.exports = {
-    columnEmptySpace,
-    checkAdjacent,
-    checkWinner,
-    updateScore,
-    switchPlayer,
-    createEmptyBoardState,
-  };
-}
+// if (typeof module !== 'undefined') {
+//   module.exports = {
+//     columnEmptySpace,
+//     checkAdjacent,
+//     checkWinner,
+//     updateScore,
+//     switchPlayer,
+//     createEmptyBoardState,
+//   };
+// }

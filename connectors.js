@@ -1,13 +1,8 @@
-const {
-  columnEmptySpace, checkWinner,
-  updateScore, switchPlayer,
-  createEmptyBoardState,
-} = require('./main.js');
-
 let winCounter = [0, 0];
 let player = 'yellow';
 let lengthNeeded = 4;
 let inputValid = true;
+let turnCount = 0;
 let board = [[null, null, null, null, null, null, null],
   [null, null, null, null, null, null, null],
   [null, null, null, null, null, null, null],
@@ -31,6 +26,10 @@ function mouseOut(column) {
     return;
   }
   $(`#${row}_${column}`).css('backgroundColor', 'white');
+}
+
+function displayDraw() {
+  $('#myModal').modal('show');
 }
 
 function sizeSquares() {
@@ -81,12 +80,16 @@ function squareClicked(column) {
   }
   board[i][j] = player;
   const winningPoints = checkWinner(i, j, lengthNeeded, board);
-  drawBoard(board);
+  drawBoard();
   if (winningPoints.length > 1) {
     winCounter = updateScore(player, winCounter);
     inputValid = false;
-    drawBoard(board);
+    drawBoard();
     highlightWinner(winningPoints);
+  }
+  turnCount += 1;
+  if (turnCount === board.length * board[0].length) {
+    displayDraw();
   }
   player = switchPlayer(player);
   mouseOver(column);
@@ -123,9 +126,10 @@ function clearGrid() {
     cols = 7;
   }
   board = createEmptyBoardState(rows, cols);
+  turnCount = 0;
   generateGrid();
-  drawBoard(board);
-  sizeSquares(board);
+  drawBoard();
+  sizeSquares();
 }
 
 function setLength() {

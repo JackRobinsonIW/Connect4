@@ -17,7 +17,8 @@
     },
     "homepage": "https://github.com/JackRobinsonIW/Connect4#readme",
     "dependencies": {
-        "jest": "^26.4.2"
+        "jest": "^26.4.2",
+        "jest-each": "^26.4.2"
     },
     "devDependencies": {
         "eslint": "^7.8.1",

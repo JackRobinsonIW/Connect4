@@ -74,13 +74,13 @@ function createEmptyBoardState(rows, columns) {
   return boardState;
 }
 
-// if (typeof module !== 'undefined') {
-//   module.exports = {
-//     columnEmptySpace,
-//     checkAdjacent,
-//     checkWinner,
-//     updateScore,
-//     switchPlayer,
-//     createEmptyBoardState,
-//   };
-// }
+if (typeof module !== 'undefined') {
+  module.exports = {
+    columnEmptySpace,
+    checkAdjacent,
+    checkWinner,
+    updateScore,
+    switchPlayer,
+    createEmptyBoardState,
+  };
+}

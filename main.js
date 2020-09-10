@@ -1,11 +1,10 @@
 function columnEmptySpace(column, boardState) {
-  let index = null;
-  for (let row = 0; row < boardState.length; row += 1) {
+  for (let row = boardState.length - 1; row >= 0; row -= 1) {
     if (boardState[row][column] === null) {
-      index = row;
+      return row;
     }
   }
-  return index;
+  return null;
 }
 
 function checkAdjacent(direction, x, y, winningPoints, boardState) {
@@ -24,7 +23,9 @@ function checkAdjacent(direction, x, y, winningPoints, boardState) {
 
   // Check if adjacent square is same value and if so call recursively
   if (boardState[x][y] === boardState[newX][newY] && boardState[newX][newY] !== null) {
-    winningPoints.push([newX, newY]);
+    if (!winningPoints.includes([newX, newY])) {
+      winningPoints.push([newX, newY]);
+    }
     return checkAdjacent(direction, newX, newY, winningPoints, boardState);
   }
 
@@ -33,7 +34,7 @@ function checkAdjacent(direction, x, y, winningPoints, boardState) {
 
 function checkWinner(x, y, lengthNeeded, boardState) {
   const winningPoints = [
-    [x, y],
+    // [x, y],
   ];
   for (let i = 0; i < 4; i += 1) {
     const checkingPoints = checkAdjacent(i + 4, x, y, [], boardState)
@@ -42,6 +43,9 @@ function checkWinner(x, y, lengthNeeded, boardState) {
       checkingPoints.forEach((element) => {
         winningPoints.push(element);
       });
+      if (!winningPoints.includes([x, y])) {
+        winningPoints.push([x, y]);
+      }
     }
   }
   return winningPoints;

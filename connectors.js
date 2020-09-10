@@ -1,6 +1,7 @@
-let winCounter = [0, 0];
-let player = 'yellow';
-let lengthNeeded = 4;
+/* eslint-disable no-console */
+const winCounter = [0, 0];
+const player = 'yellow';
+const lengthNeeded = 4;
 let inputValid = true;
 let turnCount = 0;
 let board = [[null, null, null, null, null, null, null],
@@ -9,8 +10,9 @@ let board = [[null, null, null, null, null, null, null],
   [null, null, null, null, null, null, null],
   [null, null, null, null, null, null, null],
   [null, null, null, null, null, null, null]];
+let gameState = {};
 
-function mouseOver(column) {
+function highlightOn(column) {
   if (inputValid === true) {
     const row = columnEmptySpace(column, board);
     if (row === null) {
@@ -20,7 +22,7 @@ function mouseOver(column) {
   }
 }
 
-function mouseOut(column) {
+function highlightOff(column) {
   const row = columnEmptySpace(column, board);
   if (row === null) {
     return;
@@ -69,6 +71,32 @@ function highlightWinner(winningPoints) {
   }
 }
 
+// function squareClicked(column) {
+//   if (inputValid === false) {
+//     return;
+//   }
+//   const j = column;
+//   const i = columnEmptySpace(column, board);
+//   if (i === null) {
+//     return;
+//   }
+//   board[i][j] = player;
+//   const winningPoints = checkWinner(i, j, lengthNeeded, board);
+//   drawBoard();
+//   if (winningPoints.length > 0) {
+//     winCounter = updateScore(player, winCounter);
+//     inputValid = false;
+//     drawBoard();
+//     highlightWinner(winningPoints);
+//   }
+//   turnCount += 1;
+//   if (turnCount === board.length * board[0].length) {
+//     displayDraw();
+//   }
+//   player = switchPlayer(player);
+//   highlightOn(column);
+// }
+
 function squareClicked(column) {
   if (inputValid === false) {
     return;
@@ -78,21 +106,13 @@ function squareClicked(column) {
   if (i === null) {
     return;
   }
-  board[i][j] = player;
-  const winningPoints = checkWinner(i, j, lengthNeeded, board);
-  drawBoard();
-  if (winningPoints.length > 1) {
-    winCounter = updateScore(player, winCounter);
-    inputValid = false;
-    drawBoard();
-    highlightWinner(winningPoints);
-  }
-  turnCount += 1;
-  if (turnCount === board.length * board[0].length) {
-    displayDraw();
-  }
-  player = switchPlayer(player);
-  mouseOver(column);
+  $.ajax({
+    url: `http://localhost:8080/takeTurn/${player}/${i}/${j}`,
+    type: 'POST',
+    crossDomain: true,
+    success: console.log('success'),
+    error: console.log('error'),
+  });
 }
 
 function generateGrid() {
@@ -104,9 +124,11 @@ function generateGrid() {
       const colDiv = $('<div></div>').attr('id', `${i}_${j}`)
         .addClass('board-square')
         .text('')
-        .click(squareClicked.bind(null, j))
-        .mouseover(mouseOver.bind(null, j))
-        .mouseout(mouseOut.bind(null, j));
+        .click(() => squareClicked(j))
+        // .mouseover(highlightOn.bind(null, j))
+        // .mouseout(highlightOff.bind(null, j));
+        .mouseover(() => highlightOn(j))
+        .mouseout(() => highlightOff(j));
       rowDiv.append(colDiv);
     }
     // Add to html
@@ -132,14 +154,40 @@ function clearGrid() {
   sizeSquares();
 }
 
-function setLength() {
-  lengthNeeded = $('#length-input').val();
-  $('#connect-length').text(lengthNeeded);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-  $('#clear').click(clearGrid);
-  $('#length').click(setLength);
+  $('#clear').click(() => {
+    let userRows = $('#rows-input').val();
+    let userCols = $('#cols-input').val();
+    if (!userRows) {
+      userRows = 6;
+    }
+    if (!userCols) {
+      userCols = 7;
+    }
+    $.ajax({
+      url: `http://localhost:8080/initGameBoard/${userRows}/${userCols}`,
+      type: 'POST',
+      crossDomain: true,
+    });
+    clearGrid(); // Delete this once render written
+    console.log('Clear clicked');
+    // Needs to call render function once written
+  });
+
+  $('#length').click(() => {
+    $.ajax({
+      url: 'http://localhost:8080/gameState',
+      type: 'GET',
+      crossDomain: true,
+      success(data) {
+        gameState = data;
+        console.log('Length clicked');
+        console.log(gameState);
+      },
+    });
+    console.log('Length clicked');
+    // Needs to call render function once written
+  });
 }, false);
 
 window.addEventListener('resize', () => {
@@ -149,3 +197,27 @@ window.addEventListener('resize', () => {
 generateGrid();
 sizeSquares();
 drawBoard();
+
+// $('#length').click(() => {
+//   const userLength = $('#length-input').val();
+//   // $('#connect-length').text(lengthNeeded); - Move to render function
+//   $.ajax({
+//     url: `http://localhost:8080/initGameLength/${userLength}`,
+//     type: 'POST',
+//     crossDomain: true,
+//   });
+//   console.log('Length clicked');
+//   // Needs to call render function once written
+// });
+
+// $('#length').click(() => {
+// $.ajax({
+//   url: 'http://localhost:8080/gameState',
+//   type: 'GET',
+//   crossDomain: true,
+//   success(data) {
+//     gameState = data;
+//     console.log('Length clicked');
+//     console.log(gameState);
+//   },
+// });

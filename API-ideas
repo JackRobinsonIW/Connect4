@@ -11,3 +11,6 @@ Logic server side
     -Score keeping
 
 Game state as JSON object?
+
+How to get client to load from server:
+    app.use(express.static('./client))

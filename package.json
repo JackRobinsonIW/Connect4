@@ -17,6 +17,8 @@
     },
     "homepage": "https://github.com/JackRobinsonIW/Connect4#readme",
     "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
         "jest": "^26.4.2",
         "jest-each": "^26.4.2"
     },

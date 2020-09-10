@@ -1,21 +1,5 @@
 /* eslint-disable no-console */
 
-
-let gameState = {
-  turnCount: 0,
-  player: 'yellow',
-  inputValid: true,
-  lengthNeeded: 4,
-  winCounter: [0, 0],
-  board: [[null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null]],
-  winningPoints: [],
-};
-
 function highlightOn(column) {
   if (gameState.inputValid === true) {
     const row = columnEmptySpace(column, gameState.board);
@@ -166,14 +150,30 @@ function setLength() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function initalRender() {
   $('#length').click(() => setLength());
   $('#clear').click(() => clearGrid());
   generateGrid();
   sizeSquares();
   drawBoard();
-}, false);
+  window.addEventListener('resize', () => {
+    sizeSquares(gameState.board);
+  });
+}
 
-window.addEventListener('resize', () => {
-  sizeSquares(gameState.board);
-});
+function intialGet() {
+  $.ajax({
+    url: 'http://localhost:8080/gameState',
+    type: 'GET',
+    crossDomain: true,
+    success(data) {
+      gameState = data;
+      initalRender();
+      console.log('Inital data GET');
+      console.log(gameState);
+    },
+  });
+}
+
+let gameState = {};
+intialGet();

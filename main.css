@@ -1,58 +1,81 @@
-body {
+#top-bar {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    font-family: Verdana, Geneva, sans-serif;
+}
+
+#title {
+    font-size: 50px;
+    margin: 0px;
+}
+
+#model-text {
+    font-size: 50px;
+}
+
+#partition {
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
-.score-text {
-    padding: 0;
-    margin: 0;
-}
-
-.board-item {
-    text-align: center;
-    font-size: 10px;
-    width: 8em;
-    height: 8em;
-    border: 1px solid black;
-}
-
-.board-row {
-    /* padding: 1em; */
+#scoreboard {
+    display: flex;
     justify-content: center;
 }
 
-#top-bar {
-    background-color: grey;
+#gameboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background-color: blue;
+    border-radius: 4%;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
-#bottom-bar {
-    margin-top: auto;
-    margin-bottom: 0;
-    /* position: sticky; */
-    /* bottom: 0; */
-    /* align-items: flex-end; */
-    background-color: grey;
+#scoreboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center
 }
 
-#score-section {}
+#settings-tab {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
 
-#title-section {}
+#winner-display {
+    display: none;
+    text-align: center;
+}
 
-#reset-section {}
+.board-square {
+    background-color: white;
+    border: 5px solid rgb(0, 0, 200);
+    border-radius: 50%;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+}
 
-@media only screen and (max-width: 768px) {
+.board-row {
+    width: 100%;
+    justify-content: space-evenly;
+}
+
+@keyframes highlightWinner {
+    from {border: 5px solid rgb(0, 0, 200);}
+    to {border: 10px solid whitesmoke;}
+  }
+
+@media only screen and (max-width: 576px) {
     /* For phones: */
-    .board-item {
-        width: 6em;
-        height: 6em;
-    }
-}
-
-@media only screen and (max-width: 600px) {
-    /* For phones: */
-    .board-item {
-        width: 4em;
-        height: 4em;
+    #gameboard {
+        order: -1;
     }
 }

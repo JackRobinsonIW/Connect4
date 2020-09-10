@@ -1,0 +1,28 @@
+{
+    "name": "connect4-test",
+    "version": "1.0.0",
+    "description": "",
+    "main": "main.js",
+    "scripts": {
+        "test": "jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/JackRobinsonIW/Connect4.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/JackRobinsonIW/Connect4/issues"
+    },
+    "homepage": "https://github.com/JackRobinsonIW/Connect4#readme",
+    "dependencies": {
+        "jest": "^26.4.2",
+        "jest-each": "^26.4.2"
+    },
+    "devDependencies": {
+        "eslint": "^7.8.1",
+        "eslint-config-airbnb-base": "^14.2.0",
+        "eslint-plugin-import": "^2.22.0"
+    }
+}

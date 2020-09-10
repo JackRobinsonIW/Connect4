@@ -7,108 +7,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="main.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <title>Hello, world!</title>
+    <title>Connect 4</title>
 </head>
 
 <body>
 
-    <!-- Top info bar -->
-    <div id="top-bar" class="row">
-        <div id="title-section" class="col-12 d-flex justify-content-center">
-            <h3>Connect 4</h3>
+    <!-- Top bar -->
+    <div id="top-bar">
+        <p id="title">Connect <span id="connect-length">4</span></p>
+    </div>
+
+    <!-- Modal -->
+    <div class="container">
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <center id = "modal-text"><p>It's a Draw! - Press 'Clear Grid' to reset the board.</p></center>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="notification-banner" class="">
-        <p class="text-center">Placeholder text for notification banner</p>
-    </div>
-
-    <!-- FOR MORNING -->
-    <!-- Look into dynamic sizing of the rows/ cols (take up max space in width etc) -->
-
-    <div id="board-container" class="container">
-        <!-- <div id="game-board" class="">
-            <div id="row-1" class="row board-row">
-                <div class="board-item">1</div>
-                <div class="board-item">2</div>
-                <div class="board-item">3</div>
-                <div class="board-item">4</div>
-                <div class="board-item">5</div>
-                <div class="board-item">6</div>
-                <div class="board-item">7</div>
+    <!-- Main container -->
+    <div id="main-container" class="container-fluid">
+        <div id="outer-row" class="row">
+            <div id="scoreboard" class="col-sm-2">
+                <p>Scores</p>
+                <div id="scoretable">
+                    <p id="wincount-yellow">Yellow wins: <span id="wins-yellow"></span></p>
+                    <p id="wincount-red">Red wins: <span id="wins-red"></span></p>
+                </div>
             </div>
-
-            <div id="row-2" class="row board-row">
-                <div class="board-item">1</div>
-                <div class="board-item">2</div>
-                <div class="board-item">3</div>
-                <div class="board-item">4</div>
-                <div class="board-item">5</div>
-                <div class="board-item">6</div>
-                <div class="board-item">7</div>
+            <div id="gameboard" class="col-sm-8 container">
             </div>
-
-            <div id="row-3" class="row board-row">
-                <div class="board-item">1</div>
-                <div class="board-item">2</div>
-                <div class="board-item">3</div>
-                <div class="board-item">4</div>
-                <div class="board-item">5</div>
-                <div class="board-item">6</div>
-                <div class="board-item">7</div>
+            <div id="settings-tab" class="col-sm-2">
+                <input id="rows-input" placeholder="Rows" value=6>
+                <input id="cols-input" placeholder="Columns" value=7>
+                <button id="clear" class="btn btn-primary">Clear Grid</button>
+                <input id="length-input" placeholder="Length" value=4>
+                <button id="length" class="btn btn-primary">Set Length</button>
             </div>
-
-            <div id="row-4" class="row board-row">
-                <div class="board-item">1</div>
-                <div class="board-item">2</div>
-                <div class="board-item">3</div>
-                <div class="board-item">4</div>
-                <div class="board-item">5</div>
-                <div class="board-item">6</div>
-                <div class="board-item">7</div>
-            </div>
-
-            <div id="row-5" class="row board-row">
-                <div class="board-item">1</div>
-                <div class="board-item">2</div>
-                <div class="board-item">3</div>
-                <div class="board-item">4</div>
-                <div class="board-item">5</div>
-                <div class="board-item">6</div>
-                <div class="board-item">7</div>
-            </div>
-
-            <div id="row-6" class="row board-row">
-                <div class="board-item">1</div>
-                <div class="board-item">2</div>
-                <div class="board-item">3</div>
-                <div class="board-item">4</div>
-                <div class="board-item">5</div>
-                <div class="board-item">6</div>
-                <div class="board-item">7</div>
-            </div>
-        </div> -->
-    </div>
-
-    <div id="bottom-bar" class="row">
-        <div id="score-section" class="col-6">
-            <p class="score-text">Yellow:</p>
-            <p class="score-text">Red:</p>
-        </div>
-
-        <div id="reset-section" class="col-6">
-            <button class="btn btn-primary">Reset Game</button>
         </div>
     </div>
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="grid.js"></script>
-
+    <script src="connectors.js"></script>
+    <script src="main.js"></script>
 </body>
 
 </html>

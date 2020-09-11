@@ -1,9 +1,11 @@
 function columnEmptySpace(column, boardState) {
+  // Finds and returns the lowest empty rows of a column
   for (let row = boardState.length - 1; row >= 0; row -= 1) {
     if (boardState[row][column] === null) {
       return row;
     }
   }
+  // Returns null if none found
   return null;
 }
 
@@ -29,16 +31,20 @@ function checkAdjacent(direction, x, y, winningPoints, boardState) {
     return checkAdjacent(direction, newX, newY, winningPoints, boardState);
   }
 
+  // If the adjacent square exists but is a different colour return the array
   return winningPoints;
 }
 
 function checkWinner(x, y, lengthNeeded, boardState) {
-  const winningPoints = [
-    // [x, y],
-  ];
+  // Create empty array
+  const winningPoints = [];
+
+  // Check row, col and each diagonal
   for (let i = 0; i < 4; i += 1) {
+    // Checks opposing directions and joins the arrays they return
     const checkingPoints = checkAdjacent(i + 4, x, y, [], boardState)
       .concat(checkAdjacent(i, x, y, [], boardState));
+    // If a winning arrangement is found add it to the winningPoints array
     if (checkingPoints.length >= (lengthNeeded - 1)) {
       checkingPoints.forEach((element) => {
         winningPoints.push(element);
@@ -59,10 +65,7 @@ function updateScore(player, winCounter) {
 }
 
 function switchPlayer(player) {
-  if (player === 'yellow') {
-    return 'red';
-  }
-  return 'yellow';
+  return (player === 'yellow' ? 'red' : 'yellow');
 }
 
 function createEmptyBoardState(rows, columns) {

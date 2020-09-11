@@ -1,16 +1,21 @@
 /* eslint-disable no-console */
 
+let gameState = {};
+
 function highlightOn(column) {
+  // Find empty square in a column if there is one
   if (gameState.inputValid === true) {
     const row = columnEmptySpace(column, gameState.board);
     if (row === null) {
       return;
     }
+    // Highlight square with piece
     $(`#${row}_${column}`).css('backgroundColor', gameState.player);
   }
 }
 
 function highlightOff(column) {
+  // Reverse the highlightOn function
   const row = columnEmptySpace(column, gameState.board);
   if (row === null) {
     return;
@@ -19,6 +24,7 @@ function highlightOff(column) {
 }
 
 function displayDraw() {
+  // Show draw message
   $('#myModal').modal('show');
 }
 
@@ -27,11 +33,14 @@ function sizeSquares() {
   const width = $('#gameboard').css('width');
   const titleheight = $('#title').css('height');
   const height = window.innerHeight - parseFloat(titleheight);
+
   // Calculate new desired width and height
   const newWidth = (parseFloat(width) / gameState.board[0].length) * 0.8;
   const newHeight = (height / gameState.board.length) * 0.9;
+
   // Take the scale as the minimum of width and height
   const scale = `${Math.min(newWidth, newHeight)}px`;
+
   // Apply the scale to the board squares
   $('.board-square').css('width', scale).css('height', scale);
 }
@@ -52,6 +61,7 @@ function drawBoard() {
 }
 
 function highlightWinner(winningPoints) {
+  // Loop over array adding winner animation to each point
   for (let index = 0; index < winningPoints.length; index += 1) {
     const i = winningPoints[index][0];
     const j = winningPoints[index][1];
@@ -60,34 +70,42 @@ function highlightWinner(winningPoints) {
 }
 
 function postTurn(player, i, j) {
+  // Send post request to place piece in (i,j) for 'player'
   $.ajax({
     url: `http://localhost:8080/takeTurn/${player}/${i}/${j}`,
     type: 'POST',
     crossDomain: true,
     success(data) {
+      // Bring client up to date with server
       gameState = data;
-      console.log(`${i}_${j} Filled clicked`);
+      console.log(`${i}_${j} clicked - ${player}`);
       console.log(gameState);
+      // Check if a draw has occured
       if (gameState.turnCount === gameState.board.length * gameState.board[0].length) {
         displayDraw();
       }
+      // Highlight points if there is a winner
       if (gameState.winningPoints.length > 0) {
         highlightWinner(gameState.winningPoints);
       }
+      // Call highlightOn on the same column
       highlightOn(j);
     },
   });
 }
 
 function squareClicked(column) {
+  // Check the game is not over and a move can be made
   if (gameState.inputValid === false) {
     return;
   }
+  // Check the column has an empty space
   const j = column;
   const i = columnEmptySpace(column, gameState.board);
   if (i === null) {
     return;
   }
+  // Send post request to place a piece
   postTurn(gameState.player, i, j);
 }
 
@@ -111,21 +129,27 @@ function generateGrid() {
 }
 
 function clearGrid() {
+  // Empty html
   $('#gameboard').empty();
+  // Read user input values
   let rows = $('#rows-input').val();
   let cols = $('#cols-input').val();
+  // Check input exists
   if (!rows) {
     rows = 6;
   }
   if (!cols) {
     cols = 7;
   }
+  // Send reset board post request
   $.ajax({
     url: `http://localhost:8080/initGameBoard/${rows}/${cols}`,
     type: 'POST',
     crossDomain: true,
     success(data) {
+      // Bring client up to data with server
       gameState = data;
+      // Update client side UI
       generateGrid();
       drawBoard();
       sizeSquares();
@@ -136,13 +160,16 @@ function clearGrid() {
 }
 
 function setLength() {
+  // Send post request with dersired length
   const userLength = $('#length-input').val();
   $.ajax({
     url: `http://localhost:8080/initGameLength/${userLength}`,
     type: 'POST',
     crossDomain: true,
     success(data) {
+      // Bring client up to data with server
       gameState = data;
+      // Update client side UI
       $('#connect-length').text(gameState.lengthNeeded);
       console.log('Clear clicked');
       console.log(gameState);
@@ -151,23 +178,28 @@ function setLength() {
 }
 
 function initalRender() {
+  // Add click events to buttons
   $('#length').click(() => setLength());
   $('#clear').click(() => clearGrid());
+  // Draw all inital html elements
   generateGrid();
   sizeSquares();
   drawBoard();
+  // Add rezie listener to the window
   window.addEventListener('resize', () => {
     sizeSquares(gameState.board);
   });
 }
 
 function intialGet() {
+  // Make the first get request from the server for the inital gameState
   $.ajax({
     url: 'http://localhost:8080/gameState',
     type: 'GET',
     crossDomain: true,
     success(data) {
       gameState = data;
+      // Render html based on the inital gameState data
       initalRender();
       console.log('Inital data GET');
       console.log(gameState);
@@ -175,5 +207,4 @@ function intialGet() {
   });
 }
 
-let gameState = {};
 intialGet();

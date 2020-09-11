@@ -118,7 +118,7 @@ describe('checkWinner', () => {
           [null, null, 'yellow', null, null, null, null],
         ],
       ],
-      [[2, 2], [3, 2], [4, 2], [5, 2]],
+      [[3, 2], [4, 2], [5, 2], [2, 2]],
     ],
     [
       [5, 1, 4,
@@ -131,8 +131,49 @@ describe('checkWinner', () => {
           ['yellow', 'yellow', 'yellow', 'yellow', null, null, null],
         ],
       ],
-      [[5, 1], [5, 0], [5, 2], [5, 3]],
+      [[5, 0], [5, 2], [5, 3], [5, 1]],
     ],
+    [
+      [2, 3, 5,
+        [
+          [null, null, null, null, null, null, null],
+          [null, null, null, null, 'yellow', null, null],
+          [null, null, null, 'yellow', null, null, null],
+          [null, null, 'yellow', null, null, null, null],
+          [null, 'yellow', null, null, null, null, null],
+          ['yellow', null, null, null, null, null, null],
+        ],
+      ],
+      [[3, 2], [4, 1], [5, 0], [1, 4], [2, 3]],
+    ],
+    [
+      [5, 2, 3,
+        [
+          [null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null],
+          ['yellow', null, null, null, null, null, null],
+          [null, 'yellow', null, null, null, null, null],
+          [null, null, 'yellow', null, null, null, null],
+        ],
+      ],
+      [[4, 1], [3, 0], [5, 2]],
+    ],
+    [
+      [4, 2, 4,
+        [
+          [null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null],
+          [null, null, null, null, null, null, null],
+          [null, 'yellow', 'yellow', 'yellow', null, null, null],
+          [null, 'yellow', 'yellow', 'yellow', null, null, null],
+          [null, 'yellow', 'yellow', 'yellow', null, null, null],
+        ],
+      ],
+      [],
+    ],
+
+
   ]).it("when the input is '%s'", (input, expected) => {
     expect(checkWinner(input[0], input[1], input[2], input[3])).toStrictEqual(expected);
   });

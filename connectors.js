@@ -40,9 +40,13 @@ function sizeSquares() {
 
   // Take the scale as the minimum of width and height
   const scale = `${Math.min(newWidth, newHeight)}px`;
+  const fontScale = `${Math.min(newWidth, newHeight) / 3}px`;
 
   // Apply the scale to the board squares
   $('.board-square').css('width', scale).css('height', scale);
+  $('#wincount-yellow').css('width', scale).css('height', scale);
+  $('#wincount-red').css('width', scale).css('height', scale);
+  $('#scoreboard').css('font-size', fontScale);
 }
 
 function drawBoard() {
@@ -56,8 +60,8 @@ function drawBoard() {
     }
   }
   // Update scoreboard
-  $('#wins-yellow').text(gameState.winCounter[0]);
-  $('#wins-red').text(gameState.winCounter[1]);
+  $('#wins-yellow').text(gameState.winCounter[1]);
+  $('#wins-red').text(gameState.winCounter[0]);
 }
 
 function highlightWinner(winningPoints) {

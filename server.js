@@ -30,8 +30,8 @@ app.listen(8080, () => {
   console.log('Server started 8080');
 });
 
-// Return the current server gameState
 app.get('/gameState', (req, res) => {
+  // Return the current server gameState
   res.send(gameState);
 });
 

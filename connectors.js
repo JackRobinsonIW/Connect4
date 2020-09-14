@@ -23,9 +23,13 @@ function highlightOff(column) {
   $(`#${row}_${column}`).css('backgroundColor', 'white');
 }
 
-function displayDraw() {
+function displayModal() {
   // Show draw message
   $('#myModal').modal('show');
+}
+
+function capitalisePlayer(player) {
+  return player.charAt(0).toUpperCase() + player.slice(1);
 }
 
 function sizeSquares() {
@@ -73,6 +77,10 @@ function highlightWinner(winningPoints) {
   }
 }
 
+function switchPlayer(player) {
+  return (player === 'yellow' ? 'red' : 'yellow');
+}
+
 function postTurn(player, i, j) {
   // Send post request to place piece in (i,j) for 'player'
   $.ajax({
@@ -86,12 +94,15 @@ function postTurn(player, i, j) {
       console.log(gameState);
       // Check if a draw has occured
       if (gameState.turnCount === gameState.board.length * gameState.board[0].length) {
-        displayDraw();
+        displayModal();
       }
       // Highlight points if there is a winner
       if (gameState.winningPoints.length > 0) {
         highlightWinner(gameState.winningPoints);
+        $('#modal-text').text(`${capitalisePlayer(switchPlayer(gameState.player))} wins! - Press Clear Grid to reset the board.`);
+        displayModal();
       }
+      drawBoard();
       // Call highlightOn on the same column
       highlightOn(j);
     },
@@ -154,6 +165,7 @@ function clearGrid() {
       // Bring client up to data with server
       gameState = data;
       // Update client side UI
+      $('#modal-text').text('Draw! - Press Clear Grid to reset the board.');
       generateGrid();
       drawBoard();
       sizeSquares();

@@ -2,6 +2,17 @@
 
 let gameState = {};
 
+function columnEmptySpace(column, boardState) {
+  // Finds and returns the lowest empty rows of a column
+  for (let row = boardState.length - 1; row >= 0; row -= 1) {
+    if (boardState[row][column] === null) {
+      return row;
+    }
+  }
+  // Returns null if none found
+  return null;
+}
+
 function highlightOn(column) {
   // Find empty square in a column if there is one
   if (gameState.inputValid === true) {
@@ -64,8 +75,8 @@ function drawBoard() {
     }
   }
   // Update scoreboard
-  $('#wins-yellow').text(gameState.winCounter[1]);
-  $('#wins-red').text(gameState.winCounter[0]);
+  $('#wins-yellow').text(gameState.winCounter[0]);
+  $('#wins-red').text(gameState.winCounter[1]);
 }
 
 function highlightWinner(winningPoints) {
@@ -193,10 +204,42 @@ function setLength() {
   });
 }
 
+function resetSave() {
+  $.ajax({
+    url: 'http://localhost:8080/resetSave',
+    type: 'POST',
+    crossDomain: true,
+    success(data) {
+      // Bring client up to data with server
+      gameState = data;
+      drawBoard();
+      console.log('Reset save clicked');
+      console.log(gameState);
+    },
+  });
+}
+
+function loadSave() {
+  $.ajax({
+    url: 'http://localhost:8080/loadSave',
+    type: 'POST',
+    crossDomain: true,
+    success(data) {
+      // Bring client up to data with server
+      gameState = data;
+      drawBoard();
+      console.log('Load save clicked');
+      console.log(gameState);
+    },
+  });
+}
+
 function initalRender() {
   // Add click events to buttons
   $('#length').click(() => setLength());
   $('#clear').click(() => clearGrid());
+  $('#reset').click(() => resetSave());
+  $('#load').click(() => loadSave());
   // Draw all inital html elements
   generateGrid();
   sizeSquares();

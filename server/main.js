@@ -59,9 +59,9 @@ function checkWinner(x, y, lengthNeeded, boardState) {
 
 function updateScore(player, winCounter) {
   if (player === 'yellow') {
-    return [winCounter[0] + 1, winCounter[1]];
+    return [winCounter[0], winCounter[1] + 1];
   }
-  return [winCounter[0], winCounter[1] + 1];
+  return [winCounter[0] + 1, winCounter[1]];
 }
 
 function switchPlayer(player) {

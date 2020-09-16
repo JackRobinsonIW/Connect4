@@ -1,7 +1,8 @@
+/* eslint-disable no-undef */
 const each = require('jest-each').default;
 const {
   columnEmptySpace, createEmptyBoardState, switchPlayer, updateScore, checkWinner,
-} = require('./main');
+} = require('../server/main.js');
 
 describe('createEmptyBoardState', () => {
   each([
@@ -172,7 +173,6 @@ describe('checkWinner', () => {
       ],
       [],
     ],
-
 
   ]).it("when the input is '%s'", (input, expected) => {
     expect(checkWinner(input[0], input[1], input[2], input[3])).toStrictEqual(expected);

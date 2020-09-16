@@ -51,15 +51,6 @@ async function resetSaveState(gameStateReset) {
   }
 }
 
-async function updateWins() {
-  try {
-    console.log('called update wins');
-    await fs.writeFile('./data/games-won.json', JSON.stringify(gameState.winCounter));
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 // Start the server
 app.listen(8080, () => {
   console.log('Server started 8080');
@@ -130,7 +121,6 @@ app.post('/takeTurn/:player/:row/:col', async (req, res) => {
       if (gameState.winningPoints.length > 0) {
         gameState.inputValid = false;
         gameState.winCounter = updateScore(gameState.player, gameState.winCounter);
-        updateWins();
       } else {
         gameState.turnCount += 1;
       }

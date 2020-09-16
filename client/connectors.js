@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-
 let gameState = {};
 
 function columnEmptySpace(column, boardState) {
@@ -212,7 +211,7 @@ function resetSave() {
     success(data) {
       // Bring client up to data with server
       gameState = data;
-      drawBoard();
+      clearGrid();
       console.log('Reset save clicked');
       console.log(gameState);
     },

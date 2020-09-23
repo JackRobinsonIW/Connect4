@@ -4,7 +4,7 @@
     "description": "",
     "main": "main.js",
     "scripts": {
-        "test": "jest"
+        "test": "jest --coverage"
     },
     "repository": {
         "type": "git",
@@ -17,15 +17,25 @@
     },
     "homepage": "https://github.com/JackRobinsonIW/Connect4#readme",
     "dependencies": {
+        "axios": "^0.20.0",
         "cors": "^2.8.5",
         "express": "^4.17.1",
         "jest": "^26.4.2",
         "jest-each": "^26.4.2",
-        "morgan": "^1.10.0"
+        "jquery": "^3.5.1",
+        "mock-fs": "^4.13.0",
+        "morgan": "^1.10.0",
+        "supertest": "^4.0.2",
+        "uuid": "^8.3.0"
     },
     "devDependencies": {
         "eslint": "^7.8.1",
         "eslint-config-airbnb-base": "^14.2.0",
         "eslint-plugin-import": "^2.22.0"
+    },
+    "jest": {
+        "setupFiles": [
+            "./setup-jest.js"
+        ]
     }
 }

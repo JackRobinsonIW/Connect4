@@ -17,7 +17,81 @@
         <p id="title">Connect <span id="connect-length">4</span></p>
     </div>
 
-    <!-- Modal -->
+    <!-- Login Modal -->
+    <div class="container">
+        <div class="modal fade" id="start-modal" role="dialog">
+            <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-body" id="start-modal-body">
+                        <center id = "start-text" class="modal-body-item"><p>Welcome! - Please login or continue as a guest.</p></center>
+                        <div>
+                            <div>
+                                <label class="modal-body-item">Username : </label>   
+                                <input id="username" type="text" placeholder="Enter Username" name="username" required class="modal-body-item">  
+                            </div>
+                            <div>
+                                <label class="modal-body-item">Password : </label>   
+                                <input id="password" type="password" placeholder="Enter Password" name="password" required class="modal-body-item">
+                                <p id='password-error'>Incorrect Password</p>  
+                            </div>
+                        </div>
+                        <div>
+                            <button id="guest" type="button" class="btn btn-primary modal-body-item">Guest</button>
+                            <button id="login" type="button" class="btn btn-primary modal-body-item">Continue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Modal -->
+    <div class="container">
+        <div class="modal fade" id="game-modal" role="dialog">
+            <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="container-fluid" id="game-modal-body">
+                        <div class="col-sm-6 game-modal-col">
+                            <div class="game-modal-div">
+                                <label for="games">Load a game:</label>
+                                <select name="games" id="games">
+                                </select> 
+                                <button id="load-game" type="button" class="btn btn-primary modal-body-item">Load Game</button>
+                            </div>
+                            <div class="game-modal-div">
+                                <label for="model-id">Game to join:</label>
+                                <input id="modal-id" placeholder="Game ID">
+                            </div>
+                            <button id="join-game" type="button" class="btn btn-primary modal-body-item">Join Game</button>
+                        </div>
+                        <div class="col-sm-6 game-modal-col">
+                            <div class="game-modal-div">
+                                <label for="rows">Rows:</label>
+                                <input id="rows" placeholder="Rows" value=6>
+                            </div>
+                            <div class="game-modal-div">
+                                <label for="cols">Columns:</label>
+                                <input id="cols" placeholder="Columns" value=7>
+                            </div>
+                            <div class="game-modal-div">
+                                <label for="cols">Length:</label>
+                                <input id="length" placeholder="Length" value=4>
+                            </div>
+                            <div class="game-modal-div">
+                                <label for="name">Name:</label>
+                                <input id="name" placeholder="Name">
+                            </div>
+                            <button id="new-game" type="button" class="btn btn-primary modal-body-item">New Game</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Winner Modal -->
     <div class="container">
         <div class="modal fade" id="myModal" role="dialog">
             <div class="modal-dialog modal-lg">
@@ -50,6 +124,8 @@
                 <button id="clear" class="btn btn-primary">Clear Grid</button>
                 <input id="length-input" placeholder="Length" value=4>
                 <button id="length" class="btn btn-primary">Set Length</button>
+                <input id="gameId-input" placeholder="Game Id" value=505>
+                <button id="gameId" class="btn btn-primary">Game Id</button>
             </div>
         </div>
     </div>

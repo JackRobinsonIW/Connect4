@@ -1,3 +1,7 @@
+/* eslint-disable no-console */
+const fs = require('fs').promises;
+const uuid = require('uuid');
+
 function columnEmptySpace(column, boardState) {
   // Finds and returns the lowest empty rows of a column
   for (let row = boardState.length - 1; row >= 0; row -= 1) {
@@ -81,6 +85,94 @@ function createEmptyBoardState(rows, columns) {
   return boardState;
 }
 
+async function randomName() {
+  const wordList = JSON.parse(await fs.readFile('./server/random-words.json', 'utf8'));
+  const word1 = wordList[Math.floor(Math.random() * wordList.length)];
+  const word2 = wordList[Math.floor(Math.random() * wordList.length)];
+  return word1 + word2;
+}
+
+async function searchStates(gameId) {
+  const target = `${gameId}.json`;
+  const states = await fs.readdir('./data/gameStates');
+  return (states.includes(target));
+}
+
+async function searchUsers(user) {
+  const target = `${user}.json`;
+  const users = await fs.readdir('./data/userData');
+  return (users.includes(target));
+}
+
+async function saveState(gameStateSave, gameId) {
+  try {
+    console.log('called save state');
+    await fs.writeFile(`./data/gameStates/${gameId}.json`, JSON.stringify(gameStateSave));
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function newState(gameId) {
+  try {
+    const state = {
+      turnCount: 0,
+      player: 'yellow',
+      inputValid: true,
+      lengthNeeded: 4,
+      winCounter: [0, 0],
+      board: [[null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null]],
+      winningPoints: [],
+      users: ['', ''],
+    };
+    console.log('called new state');
+    await fs.writeFile(`./data/gameStates/${gameId}.json`, JSON.stringify(state));
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function loadState(gameId) {
+  const state = JSON.parse(await fs.readFile(`./data/gameStates/${gameId}.json`, 'utf8'));
+  return state;
+}
+
+async function loadUser(username) {
+  const user = JSON.parse(await fs.readFile(`./data/userData/${username}.json`, 'utf8'));
+  return user;
+}
+
+async function resetSaveState(gameStateReset, gameId) {
+  try {
+    console.log('reset save state');
+    await fs.writeFile(`./data/gameStates/${gameId}.json`, JSON.stringify(gameStateReset));
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function createUser(username, password) {
+  try {
+    console.log('called create user');
+    const userId = uuid.v4();
+    const userData = {
+      username,
+      password,
+      userId,
+      games: [],
+    };
+    await fs.writeFile(`./data/userData/${username}.json`, JSON.stringify(userData));
+    return userId;
+  } catch (err) {
+    return err;
+  }
+}
+
 if (typeof module !== 'undefined') {
   module.exports = {
     columnEmptySpace,
@@ -89,5 +181,14 @@ if (typeof module !== 'undefined') {
     updateScore,
     switchPlayer,
     createEmptyBoardState,
+    saveState,
+    loadState,
+    resetSaveState,
+    searchStates,
+    newState,
+    createUser,
+    randomName,
+    searchUsers,
+    loadUser,
   };
 }

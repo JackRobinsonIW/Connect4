@@ -1,5 +1,18 @@
 /* eslint-disable no-console */
+const url = 'http://localhost:8080';
 let gameState = {};
+let gameId = null;
+let userId = '';
+let games = [];
+$(() => {
+  $('#start-modal').modal({ backdrop: 'static', keyboard: false });
+});
+
+function listGames() {
+  games.forEach((element) => {
+    $('#games').append(`<option value=${element}>${element}</option>`);
+  });
+}
 
 function columnEmptySpace(column, boardState) {
   // Finds and returns the lowest empty rows of a column
@@ -33,9 +46,9 @@ function highlightOff(column) {
   $(`#${row}_${column}`).css('backgroundColor', 'white');
 }
 
-function displayModal() {
+function displayModal(modalId) {
   // Show draw message
-  $('#myModal').modal('show');
+  $(modalId).modal('show');
 }
 
 function capitalisePlayer(player) {
@@ -94,7 +107,7 @@ function switchPlayer(player) {
 function postTurn(player, i, j) {
   // Send post request to place piece in (i,j) for 'player'
   $.ajax({
-    url: `http://localhost:8080/takeTurn/${player}/${i}/${j}`,
+    url: `${url}/takeTurn/${player}/${i}/${j}/${gameId}`,
     type: 'POST',
     crossDomain: true,
     success(data) {
@@ -104,13 +117,13 @@ function postTurn(player, i, j) {
       console.log(gameState);
       // Check if a draw has occured
       if (gameState.turnCount === gameState.board.length * gameState.board[0].length) {
-        displayModal();
+        displayModal('#myModal');
       }
       // Highlight points if there is a winner
       if (gameState.winningPoints.length > 0) {
         highlightWinner(gameState.winningPoints);
         $('#modal-text').text(`${capitalisePlayer(switchPlayer(gameState.player))} wins! - Press Clear Grid to reset the board.`);
-        displayModal();
+        displayModal('#myModal');
       }
       drawBoard();
       // Call highlightOn on the same column
@@ -168,7 +181,7 @@ function clearGrid() {
   }
   // Send reset board post request
   $.ajax({
-    url: `http://localhost:8080/initGameBoard/${rows}/${cols}`,
+    url: `${url}/initGameBoard/${rows}/${cols}/${gameId}/${userId}`,
     type: 'POST',
     crossDomain: true,
     success(data) {
@@ -189,7 +202,7 @@ function setLength() {
   // Send post request with dersired length
   const userLength = $('#length-input').val();
   $.ajax({
-    url: `http://localhost:8080/initGameLength/${userLength}`,
+    url: `${url}/initGameLength/${userLength}/${gameId}`,
     type: 'POST',
     crossDomain: true,
     success(data) {
@@ -205,7 +218,7 @@ function setLength() {
 
 function resetSave() {
   $.ajax({
-    url: 'http://localhost:8080/resetSave',
+    url: `${url}/resetSave/${gameId}`,
     type: 'POST',
     crossDomain: true,
     success(data) {
@@ -218,17 +231,102 @@ function resetSave() {
   });
 }
 
-function loadSave() {
+function joinSave() {
+  gameId = $('#modal-id').val();
   $.ajax({
-    url: 'http://localhost:8080/loadSave',
+    url: `${url}/loadSave/${gameId}`,
     type: 'POST',
     crossDomain: true,
     success(data) {
       // Bring client up to data with server
       gameState = data;
       drawBoard();
-      console.log('Load save clicked');
-      console.log(gameState);
+      $('#game-modal').modal('hide');
+    },
+  });
+}
+
+function loadSave() {
+  gameId = $('#games').val();
+  $.ajax({
+    url: `${url}/loadSave/${gameId}`,
+    type: 'POST',
+    crossDomain: true,
+    success(data) {
+      // Bring client up to data with server
+      gameState = data;
+      drawBoard();
+      $('#game-modal').modal('hide');
+    },
+  });
+}
+
+function changeId() {
+  gameId = $('#gameId-input').val();
+}
+
+function guestLogin() {
+  $.ajax({
+    url: `${url}/guestUser`,
+    type: 'POST',
+    crossDomain: true,
+    success(data) {
+      userId = data;
+      games = [];
+      $('#start-modal').modal('hide');
+      $('#game-modal').modal({ backdrop: 'static', keyboard: false });
+    },
+  });
+}
+
+function userLogin() {
+  const user = $('#username').val();
+  const password = $('#password').val();
+  if (user === '' || password === '') {
+    console.log('input not valid');
+    return;
+  }
+  $.ajax({
+    url: `${url}/loginUser/${user}/${password}`,
+    type: 'POST',
+    crossDomain: true,
+    success(data) {
+      userId = data[0];
+      games = data[1];
+      listGames();
+      $('#start-modal').modal('hide');
+      $('#game-modal').modal({ backdrop: 'static', keyboard: false });
+    },
+    error(xhr, textstatus, errorthrown) {
+      if (textstatus === 'error') {
+        $('#password-error').css('display', 'block');
+        console.log('error thrown');
+        console.log(errorthrown);
+        console.log(xhr.responseText);
+      }
+    },
+  });
+}
+
+function newGame() {
+  const rows = $('#rows').val();
+  const cols = $('#cols').val();
+  const length = $('#length').val();
+  gameId = $('#name').val();
+  $.ajax({
+    url: `${url}/newGame/${rows}/${cols}/${length}/${gameId}/${userId}`,
+    type: 'POST',
+    crossDomain: true,
+    success(data) {
+      // Bring client up to data with server
+      gameState = data;
+      // Update client side UI
+      $('#connect-length').text(gameState.lengthNeeded);
+      $('#modal-text').text('Draw! - Press Clear Grid to reset the board.');
+      generateGrid();
+      drawBoard();
+      sizeSquares();
+      $('#game-modal').modal('hide');
     },
   });
 }
@@ -238,11 +336,17 @@ function initalRender() {
   $('#length').click(() => setLength());
   $('#clear').click(() => clearGrid());
   $('#reset').click(() => resetSave());
-  $('#load').click(() => loadSave());
+  $('#gameId').click(() => changeId());
+  $('#guest').click(() => guestLogin());
+  $('#login').click(() => userLogin());
+
+  $('#load-game').click(() => loadSave());
+  $('#join-game').click(() => joinSave());
+  $('#new-game').click(() => newGame());
   // Draw all inital html elements
-  generateGrid();
-  sizeSquares();
-  drawBoard();
+  // generateGrid(); Maybe uncomment ############################
+  // sizeSquares();
+  // drawBoard();
   // Add rezie listener to the window
   window.addEventListener('resize', () => {
     sizeSquares(gameState.board);
@@ -252,7 +356,7 @@ function initalRender() {
 function intialGet() {
   // Make the first get request from the server for the inital gameState
   $.ajax({
-    url: 'http://localhost:8080/gameState',
+    url: `${url}/gameState/${gameId}`,
     type: 'GET',
     crossDomain: true,
     success(data) {
@@ -266,3 +370,12 @@ function intialGet() {
 }
 
 intialGet();
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    postTurn,
+    resetSave,
+    setLength,
+    loadSave,
+  };
+}

@@ -146,23 +146,6 @@ function staticEvaluation(boardState, lengthNeeded) {
   if (winner === 'red') {
     return -100;
   }
-  const oneOff = checkStateForWinner(boardState, lengthNeeded - 1);
-  if (oneOff === 'yellow') {
-    return 80;
-  }
-  if (oneOff === 'red') {
-    return -80;
-  }
-  if (lengthNeeded - 2 <= 0) {
-    return 0;
-  }
-  const twoOff = checkStateForWinner(boardState, lengthNeeded - 2);
-  if (twoOff === 'yellow') {
-    return 50;
-  }
-  if (twoOff === 'red') {
-    return -50;
-  }
   return 0;
 }
 
@@ -198,9 +181,9 @@ function minimax(boardState, depth, alpha, beta, maximisingPlayer, requiredLengt
   const gameOver = checkStateForWinner(boardState, requiredLength);
   if (depth === 0 || gameOver !== null) {
     if (maximisingPlayer) {
-      return staticEvaluation(boardState, requiredLength) - depth;
+      return staticEvaluation(boardState, requiredLength) + depth;
     }
-    return staticEvaluation(boardState, requiredLength) + depth;
+    return staticEvaluation(boardState, requiredLength) - depth;
   }
 
   if (maximisingPlayer) {
@@ -229,7 +212,10 @@ function minimax(boardState, depth, alpha, beta, maximisingPlayer, requiredLengt
   return minEval;
 }
 
-function minimaxNextMove(boardState, depth, maximisingPlayer, requiredLength) {
+function minimaxNextMove(boardState, depth, maximisingPlayer, requiredLength, turn) {
+  if(turn === 0 || turn === 1 || turn === 2) {
+    return [0, Math.floor(boardState[0].length / 2)]
+  }
   const moves = findMoves(boardState);
   const children = generateChildren(boardState, maximisingPlayer);
   const scores = [];

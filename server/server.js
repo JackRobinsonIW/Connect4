@@ -2,9 +2,21 @@
 const morgan = require('morgan');
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs').promises;
+// const FileSystem = require('mock-fs/lib/filesystem');
 const {
-  createEmptyBoardState, switchPlayer, checkWinner, updateScore,
+  createEmptyBoardState,
+  switchPlayer,
+  checkWinner,
+  updateScore,
+  saveState,
+  loadState,
+  resetSaveState,
+  searchStates,
+  newState,
+  createUser,
+  randomName,
+  searchUsers,
+  loadUser,
 } = require('./main.js');
 
 const app = express();
@@ -13,55 +25,22 @@ app.use(express.json());
 app.use(morgan('tiny'));
 app.use(express.static('client'));
 
-let gameState = {
-  turnCount: 0,
-  player: 'yellow',
-  inputValid: true,
-  lengthNeeded: 4,
-  winCounter: [0, 0],
-  board: [[null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null]],
-  winningPoints: [],
-};
-
-async function saveState(gameStateSave) {
-  try {
-    console.log('called save state');
-    await fs.writeFile('./data/server-data.json', JSON.stringify(gameStateSave));
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function loadState() {
-  const state = await fs.readFile('./data/server-data.json', 'utf8');
-  gameState = JSON.parse(state);
-}
-
-async function resetSaveState(gameStateReset) {
-  try {
-    console.log('reset save state');
-    await fs.writeFile('./data/server-data.json', JSON.stringify(gameStateReset));
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 // Start the server
 app.listen(8080, () => {
   console.log('Server started 8080');
 });
 
-app.get('/gameState', (req, res) => {
+app.get('/gameState/:gameId', async (req, res) => {
+  let state = {};
   // Return the current server gameState
-  res.send(gameState);
+  if (!await searchStates(req.params.gameId)) {
+    newState(req.params.gameId);
+  }
+  state = await loadState(req.params.gameId);
+  res.send(state);
 });
 
-app.post('/resetSave', (req, res) => {
+app.post('/resetSave/:gameId', (req, res) => {
   const resetState = {
     turnCount: 0,
     player: 'yellow',
@@ -75,58 +54,109 @@ app.post('/resetSave', (req, res) => {
       [null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null]],
     winningPoints: [],
+    users: ['', ''],
   };
-  resetSaveState(resetState);
-  gameState = resetState;
-  res.send(gameState);
+  resetSaveState(resetState, req.params.gameId);
+  res.send(resetState);
 });
 
-app.post('/loadSave', async (req, res) => {
-  await loadState();
-  res.send(gameState);
+app.post('/loadSave/:gameId', async (req, res) => {
+  const state = await loadState(req.params.gameId);
+  res.send(state);
 });
 
-app.post('/initGameBoard/:rows/:cols', (req, res) => {
+app.post('/newGame/:rows/:cols/:length/:gameId/:userId', async (req, res) => {
+  const state = {
+    turnCount: 0,
+    player: 'yellow',
+    inputValid: true,
+    lengthNeeded: req.params.length,
+    winCounter: [0, 0],
+    board: await createEmptyBoardState(req.params.rows, req.params.cols),
+    winningPoints: [],
+    users: [req.params.userId, ''],
+  };
+  console.log(state)
+  saveState(state, req.params.gameId);
+  // Send the updated gameState back to the client
+  res.send(state);
+});
+
+app.post('/initGameBoard/:rows/:cols/:gameId/:userId', async (req, res) => {
+  const state = await loadState(req.params.gameId);
   // Create new gameState using given parameters
-  gameState.board = createEmptyBoardState(req.params.rows, req.params.cols);
+  state.board = createEmptyBoardState(req.params.rows, req.params.cols);
   // Reset gameState variables
-  gameState.inputValid = true;
-  gameState.turnCount = 0;
-  gameState.winningPoints = [];
+  state.inputValid = true;
+  state.turnCount = 0;
+  state.winningPoints = [];
+  saveState(state, req.params.gameId);
   // Send the updated gameState back to the client
-  res.send(gameState);
+  res.send(state);
 });
 
-app.post('/initGameLength/:desiredLength', (req, res) => {
+app.post('/initGameLength/:desiredLength/:gameId', async (req, res) => {
+  const state = await loadState(req.params.gameId);
   // Update gameState using given parameter
-  gameState.lengthNeeded = parseInt(req.params.desiredLength, 10);
+  state.lengthNeeded = parseInt(req.params.desiredLength, 10);
   // Send the updated gameState back to the client
-  res.send(gameState);
+  res.send(state);
 });
 
-app.post('/takeTurn/:player/:row/:col', async (req, res) => {
+app.post('/takeTurn/:player/:row/:col/:gameId', async (req, res) => {
+  const state = await loadState(req.params.gameId);
   // Check its the right players turn and that input is currently allowed
-  if (req.params.player === gameState.player && gameState.inputValid === true) {
+  if (req.params.player === state.player && state.inputValid === true) {
     // Convert parameters to cooridinates
     const x = parseInt(req.params.row, 10);
     const y = parseInt(req.params.col, 10);
     // Check the (x,y) square is empty
-    if (gameState.board[x][y] === null) {
+    if (state.board[x][y] === null) {
       // Set square equal to player and switch turns
-      gameState.board[x][y] = req.params.player;
-      gameState.player = switchPlayer(gameState.player);
+      state.board[x][y] = req.params.player;
+      state.player = switchPlayer(state.player);
       // Find winning points and add to gameState
-      gameState.winningPoints = checkWinner(x, y, gameState.lengthNeeded, gameState.board);
+      state.winningPoints = checkWinner(x, y, state.lengthNeeded, state.board);
       // If there are any winning points update scores and prevent furthur input
-      if (gameState.winningPoints.length > 0) {
-        gameState.inputValid = false;
-        gameState.winCounter = updateScore(gameState.player, gameState.winCounter);
+      if (state.winningPoints.length > 0) {
+        state.inputValid = false;
+        state.winCounter = updateScore(state.player, state.winCounter);
       } else {
-        gameState.turnCount += 1;
+        state.turnCount += 1;
       }
-      await saveState(gameState);
+      await saveState(state, req.params.gameId);
       // Send the updated gameState back to the client
-      res.send(gameState);
+      res.send(state);
     }
   }
 });
+
+app.post('/createUser/:username/:password', async (req, res) => {
+  const userId = await createUser(req.params.username, req.params.password);
+  res.send(userId);
+});
+
+app.post('/loginUser/:username/:password', async (req, res) => {
+  if (!await searchUsers(req.params.username)) {
+    createUser(req.params.username, req.params.password);
+  }
+  const user = await loadUser(req.params.username);
+  if (user.password !== req.params.password) {
+    res.send(401, 'Incorrect password')
+  }
+  res.send([user.userId, user.games]);
+});
+
+app.post('/guestUser', async (req, res) => {
+  const name = await randomName();
+  createUser(name, 'guest');
+  res.send(name);
+});
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    saveState,
+    loadState,
+    resetSaveState,
+  };
+}

@@ -1,8 +1,110 @@
 /* eslint-disable no-undef */
 const each = require('jest-each').default;
+const mock = require('mock-fs');
+const fs = require('fs').promises;
+const request = require('supertest');
 const {
-  columnEmptySpace, createEmptyBoardState, switchPlayer, updateScore, checkWinner,
+  createEmptyBoardState,
+  switchPlayer,
+  checkWinner,
+  updateScore,
+  columnEmptySpace,
+  saveState,
+  loadState,
+  resetSaveState,
+  searchStates,
+  randomName,
+  searchUsers,
 } = require('../server/main.js');
+
+const games = {
+  gameId: null,
+  turnCount: 3,
+  player: 'red',
+  inputValid: true,
+  lengthNeeded: 4,
+  winCounter: [0, 0],
+  board: [[null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, 'yellow', null, null, null],
+    [null, null, 'red', 'yellow', null, null, null]],
+  winningPoints: [],
+};
+
+const users = {
+  username: 'Alice', password: 'Malice', userId: 'be2e7611-1934-41fe-bde2-1bf90ef60bd7', games: [],
+};
+
+const randomWords = ['abri', 'abris', 'abroad', 'abrupt', 'abs', 'abseil', 'absent', 'absorb', 'absurd', 'abulia'];
+
+beforeEach(() => {
+  mock({
+    './data/gameStates': {
+      '101.json': JSON.stringify(games),
+    },
+    './data/userData': {
+      'ALice.json': JSON.stringify(users),
+    },
+    './server': {
+      'random-words.json': JSON.stringify(randomWords),
+    },
+  });
+
+  jest.spyOn(global.Math, 'random').mockReturnValueOnce(0.1).mockReturnValueOnce(0.2);
+});
+
+afterEach(() => {
+  mock.restore();
+});
+
+test('loadState', async () => {
+  expect(await loadState(101)).toStrictEqual(games);
+});
+
+test('searchStates', async () => {
+  expect(await searchStates(101)).toBe(true);
+});
+
+test('searchUsers', async () => {
+  expect(await searchStates(101)).toBe(true);
+});
+
+describe('searchUsers', () => {
+  each([
+    ['Alice', true],
+    ['Bob', false],
+  ]).it("when the input is '%s'", async (input, expected) => {
+    expect(await searchUsers(input)).toBe(expected);
+  });
+});
+
+test('saveState', async () => {
+  jest.spyOn(fs, 'writeFile');
+  const state = {
+    turnCount: 0,
+    player: 'yellow',
+    inputValid: true,
+    lengthNeeded: 4,
+    winCounter: [0, 0],
+    board: [[null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null]],
+    winningPoints: [],
+    users: ['', ''],
+  };
+  const gameId = test;
+  saveState(state, gameId);
+  expect(fs).toHaveBeenCalled();
+});
+
+test('randomName', async () => {
+  expect(await randomName()).toBe('abrisabroad');
+});
 
 describe('createEmptyBoardState', () => {
   each([
@@ -95,11 +197,11 @@ describe('updateScore', () => {
   each([
     [
       ['yellow', [0, 0]],
-      [1, 0],
+      [0, 1],
     ],
     [
       ['red', [0, 0]],
-      [0, 1],
+      [1, 0],
     ],
   ]).it("when the input is '%s'", (input, expected) => {
     expect(updateScore(input[0], input[1])).toStrictEqual(expected);

@@ -82,6 +82,42 @@
     justify-content: space-evenly;
 }
 
+#start-modal-body {
+    display: flex;
+    flex-direction: column;
+    height: 200px;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#game-modal-body {
+    display: flex;
+    flex-direction: row;
+    height: 200px;
+}
+
+#start-text {
+    font-size: 20px;
+}
+
+#password-error {
+    color: red;
+    display: none;
+}
+
+.game-modal-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center; 
+}
+
+.game-modal-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
 @keyframes highlightWinner {
     from {border: 5px solid rgb(0, 0, 200);}
     to {border: 10px solid whitesmoke;}

@@ -64,6 +64,11 @@ app.post('/resetSave/:gameId', (req, res) => {
 
 app.post('/loadSave/:gameId/:userId', async (req, res) => {
   const state = await loadState(req.params.gameId);
+  if (state.users[1] === '' && state.users[0] !== req.params.userId) {
+    const user = await loadUser(req.params.userId);
+    user.games.push(req.params.gameId);
+    await saveUser(req.params.userId, user);
+  }
   if (state.users[0] === req.params.userId || state.users[1] === req.params.userId) {
     res.send(state);
   }

@@ -362,6 +362,11 @@ function refreshState() {
         $('#user1').css('display', 'block');
         $('#user2').css('display', 'block');
       }
+      if (gameState.winningPoints.length > 0) {
+        $('#modal-text').text(`${capitalisePlayer(switchPlayer(gameState.player))} wins! - Press Clear Grid to reset the board.`);
+        displayModal('#myModal');
+        highlightWinner(gameState.winningPoints);
+      }
       console.log('Refresh');
       console.log(gameState);
     },

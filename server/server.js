@@ -26,8 +26,8 @@ app.use(morgan('tiny'));
 app.use(express.static('client'));
 
 // Start the server
-app.listen(8080, () => {
-  console.log('Server started 8080');
+app.listen(3008, () => {
+  console.log('Server started 3008');
 });
 
 app.get('/gameState/:gameId', async (req, res) => {

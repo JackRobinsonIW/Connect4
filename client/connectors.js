@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const url = 'http://localhost:8080';
+const url = 'ec2-18-133-196-251.eu-west-2.compute.amazonaws.com:3008';
 let gameState = {};
 let gameId = null;
 let userId = '';

@@ -122,9 +122,15 @@ function postTurn(player, i, j) {
       }
       // Highlight points if there is a winner
       if (gameState.winningPoints.length > 0) {
-        highlightWinner(gameState.winningPoints);
-        $('#modal-text').text(`${capitalisePlayer(switchPlayer(gameState.player))} wins! - Press Clear Grid to reset the board.`);
-        displayModal('#myModal');
+        if (gameState.type === 'ai') {
+          highlightWinner(gameState.winningPoints);
+          $('#modal-text').text(`${capitalisePlayer(gameState.player)} wins! - Press Clear Grid to reset the board.`);
+          displayModal('#myModal');
+        } else {
+          highlightWinner(gameState.winningPoints);
+          $('#modal-text').text(`${capitalisePlayer(switchPlayer(gameState.player))} wins! - Press Clear Grid to reset the board.`);
+          displayModal('#myModal');
+        }
       }
       drawBoard();
       // Call highlightOn on the same column
@@ -206,6 +212,7 @@ function clearGrid() {
 
 function setLength() {
   // Send post request with dersired length
+  console.log('length')
   const userLength = $('#length-input').val();
   $.ajax({
     url: `${url}/initGameLength/${userLength}/${gameId}`,
@@ -356,6 +363,7 @@ function refreshState() {
       generateGrid();
       drawBoard();
       sizeSquares();
+      $('#connect-length').text(gameState.lengthNeeded);
       if (gameState.type === 'online') {
         $('#user1').text(gameState.users[0]);
         $('#user2').text(gameState.users[1]);
@@ -399,7 +407,7 @@ function loadSave() {
 function initalRender() {
   // Add click events to buttons
   $('#refresh').click(() => refreshState());
-  $('#length').click(() => setLength());
+  $('#length-button').click(() => setLength());
   $('#clear').click(() => clearGrid());
   $('#guest').click(() => guestLogin());
   $('#login').click(() => userLogin());

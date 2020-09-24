@@ -2,7 +2,7 @@
 const morgan = require('morgan');
 const express = require('express');
 const cors = require('cors');
-// const FileSystem = require('mock-fs/lib/filesystem');
+
 const {
   createEmptyBoardState,
   switchPlayer,
@@ -20,6 +20,22 @@ const {
   saveUser,
   validateUser,
 } = require('./main.js');
+
+const {
+  minimaxNextMove,
+  minimax,
+  generateChildren,
+  findMoves,
+  staticEvaluation,
+  checkStateForWinner,
+  ofByOneStrings,
+  winningStrings,
+  checkStateForString,
+  checkAntiDiag,
+  checkLeadingDiag,
+  checkCols,
+  checkRows,
+} = require('./AI.js');
 
 const app = express();
 app.use(cors());
@@ -124,6 +140,7 @@ app.post('/initGameLength/:desiredLength/:gameId', async (req, res) => {
   // Update gameState using given parameter
   state.lengthNeeded = parseInt(req.params.desiredLength, 10);
   // Send the updated gameState back to the client
+  await saveState(state, req.params.gameId);
   res.send(state);
 });
 
@@ -153,8 +170,25 @@ app.post('/takeTurn/:player/:row/:col/:gameId/:userId', async (req, res) => {
       if (state.winningPoints.length > 0) {
         state.inputValid = false;
         state.winCounter = updateScore(state.player, state.winCounter);
+        if (state.type === 'ai') {
+          state.player = 'yellow';
+        }
       } else {
         state.turnCount += 1;
+      }
+      if (state.type === 'ai' && state.winningPoints.length === 0) {
+        console.log('AI turn');
+        const move = minimaxNextMove(state.board, 5, false, state.lengthNeeded, state.turnCount);
+        console.log(move);
+        state.board[move[0]][move[1]] = 'red';
+        state.player = switchPlayer(state.player);
+        state.winningPoints = checkWinner(move[0], move[1], state.lengthNeeded, state.board);
+        if (state.winningPoints.length > 0) {
+          state.inputValid = false;
+          state.winCounter = updateScore(state.player, state.winCounter);
+        } else {
+          state.turnCount += 1;
+        }
       }
       await saveState(state, req.params.gameId);
       // Send the updated gameState back to the client

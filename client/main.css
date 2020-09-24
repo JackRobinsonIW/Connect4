@@ -105,6 +105,11 @@
     display: none;
 }
 
+#join-error {
+    color: red;
+    display: none;
+}
+
 .game-modal-div {
     display: flex;
     flex-direction: row;

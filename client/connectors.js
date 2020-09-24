@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const url = 'http://localhost:3008';
+const url = 'http://ec2-18-133-196-251.eu-west-2.compute.amazonaws.com:3008';
 let gameState = {};
 let gameId = null;
 let userId = '';
@@ -234,7 +234,7 @@ function resetSave() {
 function joinSave() {
   gameId = $('#modal-id').val();
   $.ajax({
-    url: `${url}/loadSave/${gameId}`,
+    url: `${url}/loadSave/${gameId}/${userId}`,
     type: 'POST',
     crossDomain: true,
     success(data) {
@@ -244,6 +244,14 @@ function joinSave() {
       generateGrid();
       sizeSquares();
       drawBoard();
+    },
+    error(xhr, textstatus, errorthrown) {
+      if (textstatus === 'error') {
+        $('#join-error').css('display', 'block');
+        console.log('error thrown');
+        console.log(errorthrown);
+        console.log(xhr.responseText);
+      }
     },
   });
 }
@@ -332,7 +340,7 @@ function refreshState() {
 function loadSave() {
   gameId = $('#games').val();
   $.ajax({
-    url: `${url}/loadSave/${gameId}`,
+    url: `${url}/loadSave/${gameId}/${userId}`,
     type: 'POST',
     crossDomain: true,
     success(data) {

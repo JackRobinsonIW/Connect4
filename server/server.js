@@ -49,11 +49,11 @@ app.post('/resetSave/:gameId', (req, res) => {
     lengthNeeded: 4,
     winCounter: [0, 0],
     board: [[null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null]],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null]],
     winningPoints: [],
     users: ['', ''],
   };
@@ -61,9 +61,18 @@ app.post('/resetSave/:gameId', (req, res) => {
   res.send(resetState);
 });
 
-app.post('/loadSave/:gameId', async (req, res) => {
+app.post('/loadSave/:gameId/:userId', async (req, res) => {
   const state = await loadState(req.params.gameId);
-  res.send(state);
+  if (state.users[0] === req.params.userId || state.users[1] === req.params.userId) {
+    res.send(state);
+  }
+  if (state.users[1] === '') {
+    state.users[1] = req.params.userId;
+    await saveState(state, req.params.gameId);
+    res.send(state);
+  } else {
+    res.send(401, 'Game full');
+  }
 });
 
 app.post('/newGame/:rows/:cols/:length/:gameId/:userId', async (req, res) => {
@@ -148,7 +157,7 @@ app.post('/loginUser/:username/:password', async (req, res) => {
   if (user.password !== req.params.password) {
     res.send(401, 'Incorrect password');
   }
-  res.send([user.userId, user.games]);
+  res.send([user.username, user.games]);
 });
 
 app.post('/guestUser', async (req, res) => {

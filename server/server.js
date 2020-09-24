@@ -17,6 +17,7 @@ const {
   randomName,
   searchUsers,
   loadUser,
+  saveUser,
 } = require('./main.js');
 
 const app = express();
@@ -76,7 +77,10 @@ app.post('/newGame/:rows/:cols/:length/:gameId/:userId', async (req, res) => {
     winningPoints: [],
     users: [req.params.userId, ''],
   };
-  console.log(state)
+  const user = await loadUser(req.params.userId);
+  user.games.push(req.params.gameId);
+  await saveUser(req.params.userId, user);
+  console.log(state);
   saveState(state, req.params.gameId);
   // Send the updated gameState back to the client
   res.send(state);
@@ -142,7 +146,7 @@ app.post('/loginUser/:username/:password', async (req, res) => {
   }
   const user = await loadUser(req.params.username);
   if (user.password !== req.params.password) {
-    res.send(401, 'Incorrect password')
+    res.send(401, 'Incorrect password');
   }
   res.send([user.userId, user.games]);
 });

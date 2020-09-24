@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 const fs = require('fs').promises;
-const uuid = require('uuid');
 
 function columnEmptySpace(column, boardState) {
   // Finds and returns the lowest empty rows of a column
@@ -147,6 +146,10 @@ async function loadUser(username) {
   return user;
 }
 
+async function saveUser(username, userData) {
+  await fs.writeFile(`./data/userData/${username}.json`, JSON.stringify(userData));
+}
+
 async function resetSaveState(gameStateReset, gameId) {
   try {
     console.log('reset save state');
@@ -159,15 +162,13 @@ async function resetSaveState(gameStateReset, gameId) {
 async function createUser(username, password) {
   try {
     console.log('called create user');
-    const userId = uuid.v4();
     const userData = {
       username,
       password,
-      userId,
       games: [],
     };
     await fs.writeFile(`./data/userData/${username}.json`, JSON.stringify(userData));
-    return userId;
+    return username;
   } catch (err) {
     return err;
   }
@@ -190,5 +191,6 @@ if (typeof module !== 'undefined') {
     randomName,
     searchUsers,
     loadUser,
+    saveUser,
   };
 }

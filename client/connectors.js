@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const url = 'ec2-18-133-196-251.eu-west-2.compute.amazonaws.com:3008';
+const url = 'http://localhost:3008';
 let gameState = {};
 let gameId = null;
 let userId = '';
@@ -240,29 +240,12 @@ function joinSave() {
     success(data) {
       // Bring client up to data with server
       gameState = data;
-      drawBoard();
       $('#game-modal').modal('hide');
+      generateGrid();
+      sizeSquares();
+      drawBoard();
     },
   });
-}
-
-function loadSave() {
-  gameId = $('#games').val();
-  $.ajax({
-    url: `${url}/loadSave/${gameId}`,
-    type: 'POST',
-    crossDomain: true,
-    success(data) {
-      // Bring client up to data with server
-      gameState = data;
-      drawBoard();
-      $('#game-modal').modal('hide');
-    },
-  });
-}
-
-function changeId() {
-  gameId = $('#gameId-input').val();
 }
 
 function guestLogin() {
@@ -331,15 +314,45 @@ function newGame() {
   });
 }
 
+function refreshState() {
+  $.ajax({
+    url: `${url}/gameState/${gameId}`,
+    type: 'GET',
+    crossDomain: true,
+    success(data) {
+      gameState = data;
+      sizeSquares();
+      drawBoard();
+      console.log('Refresh');
+      console.log(gameState);
+    },
+  });
+}
+
+function loadSave() {
+  gameId = $('#games').val();
+  $.ajax({
+    url: `${url}/loadSave/${gameId}`,
+    type: 'POST',
+    crossDomain: true,
+    success(data) {
+      // Bring client up to data with server
+      gameState = data;
+      $('#game-modal').modal('hide');
+      generateGrid();
+      sizeSquares();
+      drawBoard();
+    },
+  });
+}
+
 function initalRender() {
   // Add click events to buttons
+  $('#refresh').click(() => refreshState());
   $('#length').click(() => setLength());
   $('#clear').click(() => clearGrid());
-  $('#reset').click(() => resetSave());
-  $('#gameId').click(() => changeId());
   $('#guest').click(() => guestLogin());
   $('#login').click(() => userLogin());
-
   $('#load-game').click(() => loadSave());
   $('#join-game').click(() => joinSave());
   $('#new-game').click(() => newGame());

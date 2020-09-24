@@ -84,6 +84,18 @@ function createEmptyBoardState(rows, columns) {
   return boardState;
 }
 
+function validateUser(state, player, userId) {
+  let valid = false;
+  if (state.users[0] === userId && player === 'yellow') {
+    valid = true;
+  }
+  if (state.users[1] === userId && player === 'red') {
+    valid = true;
+  }
+  console.log(valid)
+  return valid;
+}
+
 async function randomName() {
   const wordList = JSON.parse(await fs.readFile('./server/random-words.json', 'utf8'));
   const word1 = wordList[Math.floor(Math.random() * wordList.length)];
@@ -192,5 +204,6 @@ if (typeof module !== 'undefined') {
     searchUsers,
     loadUser,
     saveUser,
+    validateUser,
   };
 }

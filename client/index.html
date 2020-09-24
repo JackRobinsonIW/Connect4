@@ -84,6 +84,14 @@
                                 <label for="name">Name:</label>
                                 <input id="name" placeholder="Name">
                             </div>
+                            <div class="game-modal-div">
+                                <label for="gametype">Type:</label>
+                                <select name="gametype" id="gametype">
+                                    <option value=local>Local</option>
+                                    <option value=online>Online</option>
+                                    <option value=ai>AI</option>
+                                </select> 
+                            </div>
                             <button id="new-game" type="button" class="btn btn-primary modal-body-item">New Game</button>
                         </div>
                     </div>
@@ -111,7 +119,9 @@
     <div id="main-container" class="container-fluid">
         <div id="outer-row" class="row">
             <div id="scoreboard" class="col-sm-2">
+                <p id="user1"></p>
                 <div id="wincount-yellow"><span id="wins-yellow"></span></div>
+                <p id="user2"></p>
                 <div id="wincount-red"><span id="wins-red"></span></div>
             </div>
             <div id="gameboard" class="col-sm-8 container">
@@ -127,7 +137,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

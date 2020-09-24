@@ -9,6 +9,7 @@ $(() => {
 });
 
 function listGames() {
+  $('#games').empty();
   games.forEach((element) => {
     $('#games').append(`<option value=${element}>${element}</option>`);
   });
@@ -107,7 +108,7 @@ function switchPlayer(player) {
 function postTurn(player, i, j) {
   // Send post request to place piece in (i,j) for 'player'
   $.ajax({
-    url: `${url}/takeTurn/${player}/${i}/${j}/${gameId}`,
+    url: `${url}/takeTurn/${player}/${i}/${j}/${gameId}/${userId}`,
     type: 'POST',
     crossDomain: true,
     success(data) {
@@ -128,6 +129,11 @@ function postTurn(player, i, j) {
       drawBoard();
       // Call highlightOn on the same column
       highlightOn(j);
+    },
+    error(xhr, textstatus) {
+      if (textstatus === 'error') {
+        console.log(xhr.responseText);
+      }
     },
   });
 }
@@ -240,16 +246,18 @@ function joinSave() {
     success(data) {
       // Bring client up to data with server
       gameState = data;
+      $('#user1').text(gameState.users[0]);
+      $('#user2').text(gameState.users[1]);
+      $('#user1').css('display', 'block');
+      $('#user2').css('display', 'block');
       $('#game-modal').modal('hide');
       generateGrid();
       sizeSquares();
       drawBoard();
     },
-    error(xhr, textstatus, errorthrown) {
+    error(xhr, textstatus) {
       if (textstatus === 'error') {
         $('#join-error').css('display', 'block');
-        console.log('error thrown');
-        console.log(errorthrown);
         console.log(xhr.responseText);
       }
     },
@@ -288,11 +296,9 @@ function userLogin() {
       $('#start-modal').modal('hide');
       $('#game-modal').modal({ backdrop: 'static', keyboard: false });
     },
-    error(xhr, textstatus, errorthrown) {
+    error(xhr, textstatus) {
       if (textstatus === 'error') {
         $('#password-error').css('display', 'block');
-        console.log('error thrown');
-        console.log(errorthrown);
         console.log(xhr.responseText);
       }
     },
@@ -303,9 +309,10 @@ function newGame() {
   const rows = $('#rows').val();
   const cols = $('#cols').val();
   const length = $('#length').val();
+  const type = $('#gametype').val();
   gameId = $('#name').val();
   $.ajax({
-    url: `${url}/newGame/${rows}/${cols}/${length}/${gameId}/${userId}`,
+    url: `${url}/newGame/${rows}/${cols}/${length}/${gameId}/${userId}/${type}`,
     type: 'POST',
     crossDomain: true,
     success(data) {
@@ -314,23 +321,47 @@ function newGame() {
       // Update client side UI
       $('#connect-length').text(gameState.lengthNeeded);
       $('#modal-text').text('Draw! - Press Clear Grid to reset the board.');
+      if (gameState.type === 'online') {
+        $('#user1').text(gameState.users[0]);
+      } else if (gameState.type === 'ai') {
+        $('#user1').text(gameState.users[0]);
+        $('#user2').text('AI');
+      } else {
+        $('#user1').text('');
+        $('#user2').text('');
+      }
+      $('#user1').css('display', 'block');
+      $('#user2').css('display', 'block');
       generateGrid();
       drawBoard();
       sizeSquares();
       $('#game-modal').modal('hide');
     },
+    error(xhr, textstatus) {
+      if (textstatus === 'error') {
+        console.log(xhr.responseText);
+      }
+    },
   });
 }
 
 function refreshState() {
+  $('#gameboard').empty();
   $.ajax({
     url: `${url}/gameState/${gameId}`,
     type: 'GET',
     crossDomain: true,
     success(data) {
       gameState = data;
-      sizeSquares();
+      generateGrid();
       drawBoard();
+      sizeSquares();
+      if (gameState.type === 'online') {
+        $('#user1').text(gameState.users[0]);
+        $('#user2').text(gameState.users[1]);
+        $('#user1').css('display', 'block');
+        $('#user2').css('display', 'block');
+      }
       console.log('Refresh');
       console.log(gameState);
     },
@@ -346,6 +377,12 @@ function loadSave() {
     success(data) {
       // Bring client up to data with server
       gameState = data;
+      if (gameState.type === 'online') {
+        $('#user1').text(gameState.users[0]);
+        $('#user2').text(gameState.users[1]);
+        $('#user1').css('display', 'block');
+        $('#user2').css('display', 'block');
+      }
       $('#game-modal').modal('hide');
       generateGrid();
       sizeSquares();

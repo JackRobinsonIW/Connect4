@@ -18,6 +18,7 @@ const {
   searchUsers,
   loadUser,
   saveUser,
+  validateUser,
 } = require('./main.js');
 
 const app = express();
@@ -49,11 +50,11 @@ app.post('/resetSave/:gameId', (req, res) => {
     lengthNeeded: 4,
     winCounter: [0, 0],
     board: [[null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null]],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null]],
     winningPoints: [],
     users: ['', ''],
   };
@@ -75,7 +76,12 @@ app.post('/loadSave/:gameId/:userId', async (req, res) => {
   }
 });
 
-app.post('/newGame/:rows/:cols/:length/:gameId/:userId', async (req, res) => {
+app.post('/newGame/:rows/:cols/:length/:gameId/:userId/:gameType', async (req, res) => {
+  console.log((await searchStates(req.params.gameId)))
+  if (await searchStates(req.params.gameId)) {
+    res.status(401).send('Game already exists');
+    return;
+  }
   const state = {
     turnCount: 0,
     player: 'yellow',
@@ -85,11 +91,11 @@ app.post('/newGame/:rows/:cols/:length/:gameId/:userId', async (req, res) => {
     board: await createEmptyBoardState(req.params.rows, req.params.cols),
     winningPoints: [],
     users: [req.params.userId, ''],
+    type: `${req.params.gameType}`,
   };
   const user = await loadUser(req.params.userId);
   user.games.push(req.params.gameId);
   await saveUser(req.params.userId, user);
-  console.log(state);
   saveState(state, req.params.gameId);
   // Send the updated gameState back to the client
   res.send(state);
@@ -116,8 +122,16 @@ app.post('/initGameLength/:desiredLength/:gameId', async (req, res) => {
   res.send(state);
 });
 
-app.post('/takeTurn/:player/:row/:col/:gameId', async (req, res) => {
+app.post('/takeTurn/:player/:row/:col/:gameId/:userId', async (req, res) => {
   const state = await loadState(req.params.gameId);
+  if (state.type === 'online' && !validateUser(state, req.params.player, req.params.userId)) {
+    // res.send(401, 'Not your turn');
+    res.status(401).send('Not your turn');
+    return;
+  }
+  if (state.type === 'ai' && req.params.player === 'red') {
+    res.send(401, 'Not your turn');
+  }
   // Check its the right players turn and that input is currently allowed
   if (req.params.player === state.player && state.inputValid === true) {
     // Convert parameters to cooridinates

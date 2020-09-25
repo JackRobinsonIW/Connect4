@@ -2,7 +2,6 @@
 const each = require('jest-each').default;
 const mock = require('mock-fs');
 const fs = require('fs').promises;
-const request = require('supertest');
 const {
   createEmptyBoardState,
   switchPlayer,
@@ -15,6 +14,11 @@ const {
   searchStates,
   randomName,
   searchUsers,
+  validateUser,
+  newState,
+  loadUser,
+  saveUser,
+  createUser,
 } = require('../server/main.js');
 
 const games = {
@@ -34,7 +38,7 @@ const games = {
 };
 
 const users = {
-  username: 'Alice', password: 'Malice', userId: 'be2e7611-1934-41fe-bde2-1bf90ef60bd7', games: [],
+  username: 'Alice', password: 'Malice', games: [],
 };
 
 const randomWords = ['abri', 'abris', 'abroad', 'abrupt', 'abs', 'abseil', 'absent', 'absorb', 'absurd', 'abulia'];
@@ -45,7 +49,7 @@ beforeEach(() => {
       '101.json': JSON.stringify(games),
     },
     './data/userData': {
-      'ALice.json': JSON.stringify(users),
+      'Alice.json': JSON.stringify(users),
     },
     './server': {
       'random-words.json': JSON.stringify(randomWords),
@@ -61,6 +65,10 @@ afterEach(() => {
 
 test('loadState', async () => {
   expect(await loadState(101)).toStrictEqual(games);
+});
+
+test('loadUser', async () => {
+  expect(await loadUser('Alice')).toStrictEqual(users);
 });
 
 test('searchStates', async () => {
@@ -80,8 +88,30 @@ describe('searchUsers', () => {
   });
 });
 
+describe('validateUser', () => {
+  each([
+    [[{ users: ['Alice', 'Bob'] }, 'yellow', 'Alice'], true],
+    [[{ users: ['Alice', 'Bob'] }, 'red', 'Alice'], false],
+    [[{ users: ['Alice', 'Bob'] }, 'red', 'Bob'], true],
+    [[{ users: ['Alice', 'Bob'] }, 'yellow', 'Carl'], false],
+  ]).it("when the input is '%s'", async (input, expected) => {
+    expect(await validateUser(input[0], input[1], input[2])).toBe(expected);
+  });
+});
+
+test('createUser', async () => {
+  const userData = {
+    username: 'Bob', password: 'Balice', games: [],
+  };
+  const username = 'Bob';
+  const password = 'Balice';
+  const returnedStr = await createUser(username, password);
+  const result = await loadUser(username);
+  expect(result).toStrictEqual(userData);
+  expect(returnedStr).toBe('Bob');
+});
+
 test('saveState', async () => {
-  jest.spyOn(fs, 'writeFile');
   const state = {
     turnCount: 0,
     player: 'yellow',
@@ -98,8 +128,63 @@ test('saveState', async () => {
     users: ['', ''],
   };
   const gameId = test;
-  saveState(state, gameId);
-  expect(fs).toHaveBeenCalled();
+  await saveState(state, gameId);
+  const result = await loadState(gameId);
+  expect(result).toStrictEqual(state);
+});
+
+test('saveUser', async () => {
+  const userData = {
+    username: 'Bob', password: 'Balice', games: [],
+  };
+  const username = 'Bob';
+  await saveUser(username, userData);
+  const result = await loadUser(username);
+  expect(result).toStrictEqual(userData);
+});
+
+test('resetSaveState', async () => {
+  const state = {
+    turnCount: 0,
+    player: 'yellow',
+    inputValid: true,
+    lengthNeeded: 4,
+    winCounter: [0, 0],
+    board: [[null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null]],
+    winningPoints: [],
+    users: ['', ''],
+  };
+  const gameId = 101;
+  await resetSaveState(state, gameId);
+  const result = await loadState(gameId);
+  expect(result).toStrictEqual(state);
+});
+
+test('newState', async () => {
+  const expected = {
+    turnCount: 0,
+    player: 'yellow',
+    inputValid: true,
+    lengthNeeded: 4,
+    winCounter: [0, 0],
+    board: [[null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null]],
+    winningPoints: [],
+    users: ['', ''],
+  };
+  const gameId = test;
+  await newState(gameId);
+  const result = await loadState(gameId);
+  expect(result).toStrictEqual(expected);
 });
 
 test('randomName', async () => {

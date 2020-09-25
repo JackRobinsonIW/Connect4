@@ -212,7 +212,6 @@ function clearGrid() {
 
 function setLength() {
   // Send post request with dersired length
-  console.log('length')
   const userLength = $('#length-input').val();
   $.ajax({
     url: `${url}/initGameLength/${userLength}/${gameId}`,
@@ -261,6 +260,7 @@ function joinSave() {
       generateGrid();
       sizeSquares();
       drawBoard();
+      refreshToggle = true;
     },
     error(xhr, textstatus) {
       if (textstatus === 'error') {
@@ -343,6 +343,7 @@ function newGame() {
       drawBoard();
       sizeSquares();
       $('#game-modal').modal('hide');
+      refreshToggle = true;
     },
     error(xhr, textstatus) {
       if (textstatus === 'error') {
@@ -400,6 +401,7 @@ function loadSave() {
       generateGrid();
       sizeSquares();
       drawBoard();
+      refreshToggle = true;
     },
   });
 }
@@ -414,11 +416,6 @@ function initalRender() {
   $('#load-game').click(() => loadSave());
   $('#join-game').click(() => joinSave());
   $('#new-game').click(() => newGame());
-  // Draw all inital html elements
-  // generateGrid(); Maybe uncomment ############################
-  // sizeSquares();
-  // drawBoard();
-  // Add rezie listener to the window
   window.addEventListener('resize', () => {
     sizeSquares(gameState.board);
   });

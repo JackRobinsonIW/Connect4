@@ -23,18 +23,6 @@ const {
 
 const {
   minimaxNextMove,
-  minimax,
-  generateChildren,
-  findMoves,
-  staticEvaluation,
-  checkStateForWinner,
-  ofByOneStrings,
-  winningStrings,
-  checkStateForString,
-  checkAntiDiag,
-  checkLeadingDiag,
-  checkCols,
-  checkRows,
 } = require('./AI.js');
 
 const app = express();

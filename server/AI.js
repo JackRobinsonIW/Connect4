@@ -1,15 +1,8 @@
 /* eslint-disable no-console */
 
-function columnEmptySpace(column, boardstate) {
-  // Finds and returns the lowest empty rows of a column
-  for (let row = boardstate.length - 1; row >= 0; row -= 1) {
-    if (boardstate[row][column] === null) {
-      return row;
-    }
-  }
-  // Returns null if none found
-  return null;
-}
+const {
+  columnEmptySpace,
+} = require('./main.js');
 
 function checkRows(boardstate, string, score) {
   for (let i = 0; i < boardstate.length; i += 1) {
@@ -72,7 +65,7 @@ function checkAntiDiag(boardstate, string, score) {
     let diag = '';
     let x = 0;
     let y = j;
-    for (let i = 0; i < Math.min(boardstate.length, j); i += 1) {
+    for (let i = 0; i < Math.min(boardstate.length, j + 1); i += 1) {
       diag += boardstate[x][y];
       x += 1;
       y -= 1;
@@ -84,7 +77,7 @@ function checkAntiDiag(boardstate, string, score) {
   for (let i = 1; i < boardstate.length; i += 1) {
     let diag = '';
     let x = i;
-    let y = boardstate[0].length;
+    let y = boardstate[0].length - 1;
     for (let j = 0; j < boardstate.length - i; j += 1) {
       diag += boardstate[x][y];
       x += 1;
@@ -117,13 +110,13 @@ function winningStrings(lengthNeeded) {
 }
 
 function ofByOneStrings(lengthNeeded) {
-  let yellowStrings = [];
-  let redStrings = [];
-  for(let i = 0; i < lengthNeeded; i+=1) {
+  const yellowStrings = [];
+  const redStrings = [];
+  for (let i = 0; i < lengthNeeded; i += 1) {
     let yellowStr = '';
     let redStr = '';
-    for(let j = 0; j < lengthNeeded; j+=1) {
-      if(i === j) {
+    for (let j = 0; j < lengthNeeded; j += 1) {
+      if (i === j) {
         yellowStr += 'null';
         redStr += 'null';
       } else {
@@ -138,24 +131,22 @@ function ofByOneStrings(lengthNeeded) {
 }
 
 function checkStateForWinner(boardstate, lengthNeeded) {
-  let eval = 0;
   const winninerStringArray = winningStrings(lengthNeeded);
-  eval += checkStateForString(boardstate, winninerStringArray[0], 100);
-  eval += checkStateForString(boardstate, winninerStringArray[1], -100);
-  return eval;
+  return checkStateForString(boardstate, winninerStringArray[0], 100)
+  + checkStateForString(boardstate, winninerStringArray[1], -100);
 }
 
 function staticEvaluation(boardstate, lengthNeeded) {
   let winningScore = checkStateForWinner(boardstate, lengthNeeded);
-  if(Math.abs(winningScore) === 100) {
+  if (Math.abs(winningScore) === 100) {
     return winningScore;
   }
   const strings = ofByOneStrings(lengthNeeded);
   strings[0].forEach((element) => {
-    winningScore += checkStateForString(boardstate, element, 20)
+    winningScore += checkStateForString(boardstate, element, 20);
   });
   strings[1].forEach((element) => {
-    winningScore += checkStateForString(boardstate, element, -20)
+    winningScore += checkStateForString(boardstate, element, -20);
   });
   return winningScore;
 }
@@ -225,8 +216,8 @@ function minimax(boardstate, depth, alpha, beta, maximisingPlayer, requiredLengt
 
 function minimaxNextMove(boardstate, depth, maximisingPlayer, requiredLength, turn) {
   if (turn === 0 || turn === 1) {
-    const col = Math.floor(boardstate[0].length / 2)
-    const row = columnEmptySpace(col, boardstate)
+    const col = Math.floor(boardstate[0].length / 2);
+    const row = columnEmptySpace(col, boardstate);
     return [row, col];
   }
   const moves = findMoves(boardstate);
@@ -246,6 +237,21 @@ function minimaxNextMove(boardstate, depth, maximisingPlayer, requiredLength, tu
   return moves[scores.indexOf(maxScore)];
 }
 
+const state = [[null, null, null, null, null, null, null],
+[null, null, null, null, null, null, null],
+[null, null, null, null, null, null, null],
+[null, null, null, null, null, null, null],
+[null, null, null, null, null, null, null],
+[null, null, null, null, null, null, null]];
+
+const string = 'redredredred';
+
+const score = 10;
+
+const result = checkLeadingDiag(state, string, score);
+
+console.log(result);
+
 if (typeof module !== 'undefined') {
   module.exports = {
     minimaxNextMove,
@@ -263,21 +269,3 @@ if (typeof module !== 'undefined') {
     checkRows,
   };
 }
-
-// const state = [
-//   [null, null, null, null, null, null, null],
-//   [null, null, null, null, null, null, null],
-//   [null, null, null, null, null, null, null],
-//   [null, null, null, null, null, null, null],
-//   [null, null, 'red', null, 'red', null, null],
-//   [null, null, 'yellow', null, 'yellow', null, null],
-// ];
-
-// const depth = 8;
-
-// console.time('someFunction')
-// const move = minimaxNextMove(state, depth, true, 4, 4);
-// console.timeEnd('someFunction')
-// console.log(move);
-// const move1 = minimaxNextMove(state, depth, false, 4, 4);
-// console.log(move1);

@@ -92,7 +92,6 @@ function validateUser(state, player, userId) {
   if (state.users[1] === userId && player === 'red') {
     valid = true;
   }
-  console.log(valid)
   return valid;
 }
 
